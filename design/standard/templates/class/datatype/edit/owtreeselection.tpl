@@ -61,14 +61,14 @@
                                      $down_image=cond($down_enabled,"button-move_down.gif","button-move_down-disabled.gif")}
                                 <input type="image"
                                        src={$up_image|ezimage}
-                                       name="CustomActionButton[{$id}_move-up]"
+                                       {if $up_enabled}name="CustomActionButton[{$id}_move-up_{$option_item.id}_{$content.options[$option_index|dec()]['id']}]"{/if}
                                        value="{$option_item.id}"
                                        title="{'Move up'|i18n('design/standard/class/datatype')}"
                                        {if $up_enabled|not}disabled="disabled"{/if} />
 
                                 <input type="image"
                                        src={$down_image|ezimage}
-                                       name="CustomActionButton[{$id}_move-down]"
+                                       {if $down_enabled}name="CustomActionButton[{$id}_move-down_{$option_item.id}_{$content.options[$option_index|inc()]['id']}]"{/if}
                                        value="{$option_item.id}"
                                        title="{'Move down'|i18n('design/standard/class/datatype')}"
                                        {if $down_enabled|not}disabled="disabled"{/if} />
@@ -123,14 +123,14 @@
                                          $down_image=cond($down_enabled,"button-move_down.gif","button-move_down-disabled.gif")}
                                     <input type="image"
                                            src={$up_image|ezimage}
-                                           name="CustomActionButton[{$id}_move-up]"
+                                           {if $up_enabled}name="CustomActionButton[{$id}_move-up_{$sub_option_item.id}_{$option_item.options[$sub_option_index|dec()]['id']}]"{/if}
                                            value="{$sub_option_item.id}"
                                            title="{'Move up'|i18n('design/standard/class/datatype')}"
                                            {if $up_enabled|not}disabled="disabled"{/if} />
 
                                     <input type="image"
                                            src={$down_image|ezimage}
-                                           name="CustomActionButton[{$id}_move-down]"
+                                           {if $down_enabled}name="CustomActionButton[{$id}_move-down_{$sub_option_item.id}_{$option_item.options[$sub_option_index|inc()]['id']}]"{/if}
                                            value="{$sub_option_item.id}"
                                            title="{'Move down'|i18n('design/standard/class/datatype')}"
                                            {if $down_enabled|not}disabled="disabled"{/if} />

@@ -236,19 +236,15 @@ class OWTreeSelectionType extends eZDataType {
                 break;
 
             case 'move-up':
-                $customActionVar = $http->postVariable( $customActionVarName );
-                $customActionValue = $customActionVar[$customActionKeyName]; // This is where the user clicked
-// Up == swap selected row with the one above
-// Or: Move the row above below the selected one
-                $this->swapRows( $customActionValue - 1, $customActionValue, $content, $idArray );
+                if ( isset( $actionlist[1] ) && isset( $actionlist[2] ) ) {
+                    $this->swapRows( $actionlist[1], $actionlist[2], $content );
+                }
                 break;
 
             case 'move-down':
-                $customActionVar = $http->postVariable( $customActionVarName );
-                $customActionValue = $customActionVar[$customActionKeyName]; // This is where the user clicked
-// Down == swap selected row with the one below
-// Or: Move the selected row below the one below
-                $this->swapRows( $customActionValue, $customActionValue + 1, $content, $idArray );
+                if ( isset( $actionlist[1] ) && isset( $actionlist[2] ) ) {
+                    $this->swapRows( $actionlist[1], $actionlist[2], $content );
+                }
                 break;
 
             case 'sort-option-group':
@@ -787,17 +783,33 @@ class OWTreeSelectionType extends eZDataType {
         return false;
     }
 
-    function swapRows( $highest, $lowest, &$content, &$postVar ) {
-        if ( isset( $content['options'][$highest] ) and isset( $content['options'][$lowest] ) ) {
-// Ok to proceed
-            $tmp = $content['options'][$highest];
-            $content['options'][$highest] = $content['options'][$lowest];
-            $content['options'][$lowest] = $tmp;
-
-// Make sure the post var follows
-            $tmp = $postVar[$highest];
-            $postVar[$highest] = $postVar[$lowest];
-            $postVar[$lowest] = $tmp;
+    function swapRows( $optionID1, $optionID2, &$content ) {
+        foreach ( $content['options'] as $index1 => $option1 ) {
+            if ( $option1['id'] == $optionID1 ) {
+                $tmpOption1 = $option1;
+                foreach ( $content['options'] as $index2 => $option2 ) {
+                    if ( $option2['id'] == $optionID2 ) {
+                        $content['options'][$index1] = $option2;
+                        $content['options'][$index2] = $tmpOption1;
+                        continue;
+                    }
+                }
+                continue;
+            } elseif ( isset( $option1['options'] ) ) {
+                foreach ( $option1['options'] as $subIndex1 => $subOption1 ) {
+                    if ( $subOption1['id'] == $optionID1 ) {
+                        $tmpOption1 = $subOption1;
+                        foreach ( $option1['options'] as $subIndex2 => $subOption2 ) {
+                            if ( $subOption2['id'] == $optionID2 ) {
+                                $content['options'][$index1]['options'][$subIndex1] = $option2;
+                                $content['options'][$index1]['options'][$subIndex2] = $tmpOption1;
+                                continue;
+                            }
+                        }
+                        continue;
+                    }
+                }
+            }
         }
     }
 

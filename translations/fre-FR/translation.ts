@@ -55,6 +55,14 @@
 			<source>Priority</source>
 			<translation>Priorité</translation>
 		</message>
+		<message>
+			<source>Move up</source>
+			<translation>Monter</translation>
+		</message>
+		<message>
+			<source>Move down</source>
+			<translation>Descendre</translation>
+		</message>
 		<!--message>
 			<source>Option list</source>
 			<translation>Liste des options</translation>
