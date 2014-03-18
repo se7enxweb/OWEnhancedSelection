@@ -252,72 +252,23 @@ class OWTreeSelectionType extends eZDataType {
                 break;
 
             case 'sort-option-group':
-                $sortName = join( '_', array( $base, 'owtreeselection_sort_order',
-                    $id ) );
-
+                $sortName = "{$base}_owtreeselection_sort_order_{$id}";
                 if ( $http->hasPostVariable( $sortName ) ) {
                     $sort = $http->postVariable( $sortName );
-                    $sortArray = array();
-                    $sortOrder = SORT_ASC;
-                    $sortType = SORT_STRING;
-                    $numericSorts = array( 'prior' );
 
                     if ( strpos( $sort, '_' ) !== false ) {
                         list( $type, $ranking ) = explode( '_', $sort );
-                        $currentOptions = $content['options'];
 
-                        switch ( $ranking ) {
-                            case 'desc':
-                                $sortOrder = SORT_DESC;
-                                break;
 
-                            case 'asc':
-                            default:
-                                $sortOrder = SORT_ASC;
-                                break;
-                        }
-
-                        if ( in_array( $type, $numericSorts ) ) {
-                            $sortType = SORT_NUMERIC;
-                        }
 
 // Use POST priorities instead of the stored ones
 // Otherwise you have to store new priorities before you can sort
                         $priorityArray = array();
                         if ( $type == 'prior' ) {
-                            $priorityArray = $http->postVariable( join( '_', array(
-                                $base, 'owtreeselection_priority',
-                                $id ) ) );
+                            $priorityArray = $http->postVariable( "{$base}_owtreeselection_priority_{$id}" );
                         }
 
-                        foreach ( array_keys( $currentOptions ) as $key ) {
-                            $option = $currentOptions[$key];
-
-                            switch ( $type ) {
-                                case 'prior':
-                                    if ( isset( $priorityArray[$option['id']] ) ) {
-                                        $option['priority'] = $priorityArray[$option['id']];
-                                    }
-                                    $sortArray[] = $option['priority'];
-                                    break;
-
-                                case 'alpha':
-                                default:
-                                    $sortArray[] = $option['name'];
-                                    break;
-                            }
-
-                            unset( $option );
-                        }
-
-                        array_multisort( $sortArray, $sortOrder, $sortType, $currentOptions );
-
-                        $idArray = array();
-                        foreach ( $currentOptions as $option ) {
-                            $idArray[] = $option['id'];
-                        }
-
-                        $content['options'] = $currentOptions;
+                        $content['options'] = $this->sortOptions( $content['options'], $type, $ranking, $priorityArray );
                     } else {
                         eZDebug::writeError( "Unknown sort value. Please use the form type_order (ex. alpha_asc)", "OWTreeSelectionType" );
                     }
@@ -551,186 +502,6 @@ class OWTreeSelectionType extends eZDataType {
         return 'string';
     }
 
-    function serializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode ) {
-        $content = $classAttribute->content();
-
-        $dom = $attributeParametersNode->ownerDocument;
-        $optionsNode = $dom->createElement( 'options' );
-
-        if ( is_array( $content['options'] ) and count( $content['options'] ) > 0 ) {
-            foreach ( $content['options'] as $option ) {
-                $optionNode = $dom->createElement( 'option' );
-
-                $optionNode->setAttribute( 'id', $option['id'] );
-                $optionNode->setAttribute( 'name', $option['name'] );
-                $optionNode->setAttribute( 'identifier', $option['identifier'] );
-                $optionNode->setAttribute( 'priority', $option['priority'] );
-
-                $optionsNode->appendChild( $optionNode );
-
-                unset( $optionNode );
-            }
-        }
-
-        $delimiterElement = $dom->createElement( 'delimiter' );
-        $delimiterElement->appendChild( $dom->createCDATASection( $content['delimiter'] ) );
-        $attributeParametersNode->appendChild( $delimiterElement );
-        $attributeParametersNode->appendChild( $dom->createElement( 'multiselect', $content['is_multiselect'] ) );
-        $queryElement = $dom->createElement( 'query' );
-        $queryElement->appendChild( $dom->createCDATASection( $content['query'] ) );
-        $attributeParametersNode->appendChild( $queryElement );
-        $attributeParametersNode->appendChild( $optionsNode );
-
-        unset( $optionsNode );
-    }
-
-    function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode ) {
-        /*
-          $content = array();
-
-          $delimiter = $attributeParametersNode->getElementsByTagName( 'delimiter' )->item( 0 )->nodeValue;
-          $multiselect = $attributeParametersNode->getElementsByTagName( 'multiselect' )->item( 0 )->textContent;
-          $query = $attributeParametersNode->getElementsByTagName( 'query' )->item( 0 )->nodeValue;
-
-          $content['delimiter'] = $delimiter !== false ? $delimiter : '';
-          $content['is_multiselect'] = $multiselect !== false ? intval( $multiselect ) : 0;
-          $content['query'] = $query !== false ? $query : '';
-          $content['options'] = array();
-
-          $optionsNode = $attributeParametersNode->getElementsByTagName( 'options' )->item( 0 );
-
-          $dom = $optionsNode->ownerDocument;
-
-
-
-          if ( $optionsNode instanceof DomElement && $optionsNode->hasChildNodes() === true ) {
-          $children = $optionsNode->childNodes;
-
-          foreach ( $children as $key => $child ) {
-          if ( $child instanceof DomElement ) {
-          $content['options'][] = array( 'id' => $child->getAttribute( 'id' ),
-          'name' => $child->getAttribute( 'name' ),
-          'identifier' => $child->getAttribute( 'identifier' ),
-          'priority' => $child->getAttribute( 'priority' ) );
-          }
-          }
-          }
-
-          unset( $optionsNode );
-
-          $xmlString = $this->classContentToXml( $content );
-
-          $classAttribute->setAttribute( self::CONTENT_CLASS_STORAGE, $xmlString );
-         */
-    }
-
-    /*     * ********
-     * HELPERS *
-     * ******** */
-    /*
-      function classContentToXml( $content ) {
-      $doc = new DOMDocument();
-      $root = $doc->createElement( 'content' );
-
-      $optionsNode = $doc->createElement( 'options' );
-
-      if ( isset( $content['options'] ) and count( $content['options'] ) > 0 ) {
-      foreach ( $content['options'] as $option ) {
-      $optionNode = $doc->createElement( 'option' );
-
-      $optionNode->setAttribute( 'id', $option['id'] );
-      $optionNode->setAttribute( 'name', $option['name'] );
-      $optionNode->setAttribute( 'identifier', $option['identifier'] );
-      $optionNode->setAttribute( 'priority', $option['priority'] );
-
-      $optionsNode->appendChild( $optionNode );
-
-      unset( $optionNode );
-      }
-      }
-
-      $root->appendChild( $optionsNode );
-
-
-      // Multiselect
-      if ( isset( $content['is_multiselect'] ) ) {
-      $multiSelectNode = $doc->createElement( 'multiselect', $content['is_multiselect'] );
-      $root->appendChild( $multiSelectNode );
-      }
-
-      // Delimiter
-      if ( isset( $content['delimiter'] ) ) {
-      $delimiterElement = $doc->createElement( 'delimiter' );
-      $delimiterElement->appendChild( $doc->createCDATASection( $content['delimiter'] ) );
-      $root->appendChild( $delimiterElement );
-      }
-
-      // DB Query
-      if ( isset( $content['query'] ) ) {
-      $queryElement = $doc->createElement( 'query' );
-      $queryElement->appendChild( $doc->createCDATASection( $content['query'] ) );
-      $root->appendChild( $queryElement );
-      }
-
-      $doc->appendChild( $root );
-
-      $xml = $doc->saveXML();
-
-      return $xml;
-      }
-     */
-    /*
-      function xmlToClassContent( $xmlString, &$content ) {
-      if ( $xmlString != '' ) {
-      $dom = new DOMDocument();
-      $dom->preserveWhiteSpace = false;
-      $dom->loadXML( $xmlString );
-
-      if ( $dom ) {
-      $optionsNode = $dom->getElementsByTagName( 'options' )->item( 0 );
-      $content['options'] = array();
-
-      if ( $optionsNode instanceof DomElement && $optionsNode->hasChildNodes() == true ) {
-      $children = $optionsNode->childNodes;
-
-      foreach ( $children as $child ) {
-      $content['options'][] = array( 'id' => $child->getAttribute( 'id' ),
-      'name' => $child->getAttribute( 'name' ),
-      'identifier' => $child->getAttribute( 'identifier' ),
-      'priority' => $child->getAttribute( 'priority' ) );
-      }
-      }
-
-      $multiSelectNode = $dom->getElementsByTagName( 'multiselect' )->item( 0 );
-      $content['is_multiselect'] = 0;
-
-      if ( $multiSelectNode instanceof DomElement ) {
-      $content['is_multiselect'] = intval( $multiSelectNode->textContent );
-      }
-
-      $delimiterNode = $dom->getElementsByTagName( 'delimiter' )->item( 0 );
-      $content['delimiter'] = '';
-
-      if ( $delimiterNode instanceof DomElement ) {
-      $content['delimiter'] = $delimiterNode->nodeValue;
-      }
-
-      $queryNode = $dom->getElementsByTagName( 'query' )->item( 0 );
-      $content['query'] = '';
-
-      if ( $queryNode instanceof DomElement ) {
-      $content['query'] = trim( $queryNode->nodeValue );
-      }
-      } else {
-      $content['options'] = array();
-      $content['is_multiselect'] = 0;
-      $content['delimiter'] = '';
-      $content['query'] = '';
-      }
-      }
-      }
-     */
-
     function generateIdentifier( $name, $identifierArray = array() ) {
         if ( empty( $name ) ) {
             return '';
@@ -909,6 +680,53 @@ class OWTreeSelectionType extends eZDataType {
             }
         }
         return ++$maxID;
+    }
+
+    function sortOptions( $currentOptions, $type, $ranking, $priorityArray = array() ) {
+        $sortArray = array();
+        $sortOrder = SORT_ASC;
+        $sortType = SORT_STRING;
+        $numericSorts = array( 'prior' );
+        switch ( $ranking ) {
+            case 'desc':
+                $sortOrder = SORT_DESC;
+                break;
+
+            case 'asc':
+            default:
+                $sortOrder = SORT_ASC;
+                break;
+        }
+
+        if ( in_array( $type, $numericSorts ) ) {
+            $sortType = SORT_NUMERIC;
+        }
+        foreach ( array_keys( $currentOptions ) as $key ) {
+            $option = $currentOptions[$key];
+
+            switch ( $type ) {
+                case 'prior':
+                    if ( isset( $priorityArray[$option['id']] ) ) {
+                        $option['priority'] = $priorityArray[$option['id']];
+                    }
+                    $sortArray[] = $option['priority'];
+                    break;
+
+                case 'alpha':
+                default:
+                    $sortArray[] = $option['name'];
+                    break;
+            }
+
+            unset( $option );
+        }
+        array_multisort( $sortArray, $sortOrder, $sortType, $currentOptions );
+        foreach ( $currentOptions as $index => $options ) {
+            if ( isset( $options['options'] ) ) {
+                $currentOptions[$index]['options'] = $this->sortOptions( $options['options'], $type, $ranking, $priorityArray );
+            }
+        }
+        return $currentOptions;
     }
 
 }
