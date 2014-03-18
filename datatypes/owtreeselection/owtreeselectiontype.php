@@ -214,15 +214,27 @@ class OWTreeSelectionType extends eZDataType {
                 break;
 
             case 'remove-selected-option':
-                $removeArrayName = join( '_', array( $base, "owtreeselection_remove",
-                    $id ) );
+                $removeArrayName = "{$base}_owtreeselection_remove_{$id}";
 
                 if ( $http->hasPostVariable( $removeArrayName ) ) {
                     $removeArray = $http->postVariable( $removeArrayName );
 
                     foreach ( $removeArray as $removeID ) {
-                        unset( $idArray[$removeID] );
-                        unset( $content['options'][$removeID] );
+                        foreach ( $content['options'] as $index => $option ) {
+                            if ( $option['id'] == $removeID ) {
+                                unset( $content['options'][$index] );
+                                $content['options'] = array_values( $content['options'] );
+                                continue;
+                            } elseif ( isset( $option['options'] ) ) {
+                                foreach ( $option['options'] as $subIndex => $subOption ) {
+                                    if ( $subOption['id'] == $removeID ) {
+                                        unset( $content['options'][$index]['options'][$subIndex] );
+                                        $content['options'][$index]['options'] = array_values( $content['options'][$index]['options'] );
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 break;
