@@ -172,23 +172,15 @@ class OWTreeSelectionType extends eZDataType {
     }
 
     function customClassAttributeHTTPAction( $http, $action, $classAttribute ) {
-
         $id = $classAttribute->attribute( 'id' );
         $base = "ContentClass";
         $content = $classAttribute->content();
 
-        $customActionVarName = "CustomActionButton";
-        $customActionKeyName = "{$id}_{$action}";
-
         $idArrayName = "{$base}_owtreeselection_id_{$id}";
-        $parentArrayName = "{$base}_owtreeselection_parent_{$id}";
         $idArray = array();
 
         if ( $http->hasPostVariable( $idArrayName ) ) {
             $idArray = $http->postVariable( $idArrayName );
-        }
-        if ( $http->hasPostVariable( $parentArrayName ) ) {
-            $parentArray = $http->postVariable( $parentArrayName );
         }
 
         $actionlist = explode( "_", $action );
