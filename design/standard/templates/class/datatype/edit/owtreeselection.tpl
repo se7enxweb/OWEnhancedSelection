@@ -55,10 +55,10 @@
                         </td>
                         <td>
                             <div style="white-space: nowrap;">
-                                {set $up_enabled=$option_row.number|eq(1)|not
-												 $down_enabled=$option_row.number|eq(count($content.options))|not
-												 $up_image=cond($up_enabled,"button-move_up.gif","button-move_up-disabled.gif")
-												 $down_image=cond($down_enabled,"button-move_down.gif","button-move_down-disabled.gif")}
+                                {set $up_enabled=$option_index|ne(0)
+                                     $down_enabled=$option_index|lt(count($content.options)|dec())
+                                     $up_image=cond($up_enabled,"button-move_up.gif","button-move_up-disabled.gif")
+                                     $down_image=cond($down_enabled,"button-move_down.gif","button-move_down-disabled.gif")}
                                 <input type="image"
                                        src={$up_image|ezimage}
                                        name="CustomActionButton[{$id}_move-up]"
@@ -97,9 +97,6 @@
                                 <input type="hidden"
                                        name="ContentClass_owtreeselection_id_{$id}[]"
                                        value="{$sub_option_item.id}" />
-                                <input type="hidden" 
-                                       name="ContentClass_owtreeselection_parent_{$id}[{$sub_option_item.id}]" 
-                                       value="{$option_item.id}" />
                                 <input type="text"
                                        name="ContentClass_owtreeselection_name_{$id}[{$sub_option_item.id}]"
                                        value="{$sub_option_item.name|wash}" />
@@ -120,10 +117,10 @@
 
                             <td>
                                 <div style="white-space: nowrap;">
-                                    {set $up_enabled=$option_row.number|eq(1)|not
-												 $down_enabled=$option_row.number|eq(count($content.options))|not
-												 $up_image=cond($up_enabled,"button-move_up.gif","button-move_up-disabled.gif")
-												 $down_image=cond($down_enabled,"button-move_down.gif","button-move_down-disabled.gif")}
+                                    {set $up_enabled=$sub_option_index|ne(0)
+                                         $down_enabled=$sub_option_index|lt(count($option_item.options)|dec())
+                                         $up_image=cond($up_enabled,"button-move_up.gif","button-move_up-disabled.gif")
+                                         $down_image=cond($down_enabled,"button-move_down.gif","button-move_down-disabled.gif")}
                                     <input type="image"
                                            src={$up_image|ezimage}
                                            name="CustomActionButton[{$id}_move-up]"
