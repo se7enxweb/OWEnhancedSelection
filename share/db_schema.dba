@@ -1,0 +1,55 @@
+<?php
+
+// This array contains the database schema
+$schema = array(
+    'owenhancedselection' => array(
+        'name' => 'owenhancedselection',
+        'fields' => array(
+            'id' => array(
+                'type' => 'auto_increment',
+                'default' => FALSE,
+            ),
+            'contentclassattribute_id' => array(
+                'length' => 11,
+                'type' => 'int',
+                'not_null' => TRUE,
+                'default' => FALSE,
+            ),
+            'type' => array(
+                'length' => 8,
+                'type' => 'varchar',
+                'not_null' => FALSE,
+                'default' => FALSE,
+            ),
+            'optgroup_id' => array(
+                'length' => 11,
+                'type' => 'int',
+                'not_null' => FALSE,
+                'default' => FALSE,
+            ),
+            'serialized_name_list' => array(
+                'type' => 'longtext',
+                'default' => false,
+            ),
+            'identifier' => array(
+                'length' => 40,
+                'type' => 'varchar',
+                'not_null' => FALSE,
+                'default' => FALSE,
+            ),
+            'priority' => array(
+                'length' => 11,
+                'type' => 'int',
+                'not_null' => FALSE,
+                'default' => FALSE,
+            ),
+        ),
+        'indexes' => array(
+            'PRIMARY' => array(
+                'type' => 'primary',
+                'fields' => array( 'id' ),
+            )
+        )
+    ),
+    '_info' => array( 'format' => 'generic', ),
+);

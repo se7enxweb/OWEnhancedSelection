@@ -4,9 +4,9 @@
 	<context>
 		<name>kernel/classes/datatypes</name>
 		<message>
-			<source>Enhanced selection 2</source>
+			<source>Enhanced selection (OW)</source>
 			<comment>Datatype name</comment>
-			<translation>Sélection améliorée</translation>
+			<translation>Sélection améliorée (OW)</translation>
 		</message>
 		<message>
 			<source>This is a required field.</source>

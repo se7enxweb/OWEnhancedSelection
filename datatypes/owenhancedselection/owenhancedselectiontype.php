@@ -31,7 +31,7 @@ class OWEnhancedSelectionType extends eZDataType {
     const CONTENT_CLASS_STORAGE = 'data_text5';
 
     function __construct() {
-        $this->eZDataType( self::DATATYPESTRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Enhanced selection', 'Datatype name' ), array(
+        $this->eZDataType( self::DATATYPESTRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Enhanced selection (OW)', 'Datatype name' ), array(
             'serialize_supported' => true,
             'object_serialize_map' => array( 'data_text' => 'selection' )
         ) );
@@ -65,8 +65,6 @@ class OWEnhancedSelectionType extends eZDataType {
         $idArrayName = "{$base}_owenhancedselection_id_{$id}";
         $nameArrayName = "{$base}_owenhancedselection_name_{$id}";
         $identifierArrayName = "{$base}_owenhancedselection_identifier_{$id}";
-        $priorityArrayName = "{$base}_owenhancedselection_priority_{$id}";
-        $typeArrayName = "{$base}_owenhancedselection_type_{$id}";
 
         $multiSelectName = "{$base}_owenhancedselection_multi_{$id}";
         $delimiterName = "{$base}_owenhancedselection_delimiter_{$id}";
@@ -77,36 +75,14 @@ class OWEnhancedSelectionType extends eZDataType {
             $idArray = $http->postVariable( $idArrayName );
             $nameArray = $http->postVariable( $nameArrayName );
             $identifierArray = $http->postVariable( $identifierArrayName );
-            $priorityArray = $http->postVariable( $priorityArrayName );
-            $typeArray = $http->postVariable( $typeArrayName );
             foreach ( $idArray as $id ) {
                 $name = isset( $nameArray[$id] ) ? $nameArray[$id] : '';
                 $identifier = isset( $identifierArray[$id] ) && !empty( $identifierArray[$id] ) ? $identifierArray[$id] : $this->generateIdentifier( $name, $identifierArray );
-                $priority = isset( $priorityArray[$id] ) ? $priorityArray[$id] : 1;
-
-                $option = array(
-                    'id' => $id,
-                    'name' => $name,
-                    'identifier' => $identifier,
-                    'priority' => $priority );
-                if ( isset( $typeArray[$id] ) && $typeArray[$id] == 'group' ) {
-                    $option['options'] = array();
-                }
-                foreach ( $content['options'] as $index1 => $option1 ) {
-                    if ( $option1['id'] == $id ) {
-                        if ( isset( $option1['options'] ) ) {
-                            $option['options'] = $option1['options'];
-                        }
-                        $content['options'][$index1] = $option;
-                        continue;
-                    } elseif ( isset( $option1['options'] ) ) {
-                        foreach ( $option1['options'] as $index2 => $option2 ) {
-                            if ( $option2['id'] == $id ) {
-                                $content['options'][$index1]['options'][$index2] = $option;
-                                continue;
-                            }
-                        }
-                    }
+                $option = OWEnhancedSelection::fetch( array( 'id' => $id ) );
+                if ( $option instanceof OWEnhancedSelection ) {
+                    $option->setName( $name, $classAttribute->editLocale() );
+                    $option->setAttribute( 'identifier', $identifier );
+                    $option->store();
                 }
             }
         }
@@ -132,23 +108,6 @@ class OWEnhancedSelectionType extends eZDataType {
     }
 
     function classAttributeContent( $classAttribute ) {
-        /*
-          $xmlString = $classAttribute->attribute( self::CONTENT_CLASS_STORAGE );
-          $content = array();
-
-          $this->xmlToClassContent( $xmlString, $content );
-
-          $content['db_options'] = $this->getDbOptions( $content );
-
-          $queryName = join( '_', array( 'ContentClass_owenhancedselection_query', $classAttribute->attribute( 'id' ) ) );
-          $http = eZHTTPTool::instance();
-
-          if ( empty( $content['query'] ) and
-          $http->hasPostVariable( $queryName ) ) {
-          $query = $http->postVariable( $queryName );
-          $content['query'] = $query;
-          }
-         */
         $content = @unserialize( $classAttribute->attribute( self::CONTENT_CLASS_STORAGE ) );
         if ( empty( $content ) ) {
             $content = array(
@@ -159,6 +118,7 @@ class OWEnhancedSelectionType extends eZDataType {
                 'db_options' => null
             );
         } else {
+            $content['options'] = OWEnhancedSelection::fetchAttributeOptionlist( $classAttribute->attribute( 'id' ) );
             $content['db_options'] = $this->getDbOptions( $content );
         }
         return $content;
@@ -166,8 +126,8 @@ class OWEnhancedSelectionType extends eZDataType {
 
     function storeClassAttribute( $classAttribute, $version ) {
         $content = $classAttribute->content();
-        unset( $content['db_options'] ); // Make sure this can never slip into the database
-        /* $xmlString = $this->classContentToXml( $content ); */
+        unset( $content['db_options'] );
+        unset( $content['options'] );
         $classAttribute->setAttribute( self::CONTENT_CLASS_STORAGE, serialize( $content ) );
     }
 
@@ -187,30 +147,27 @@ class OWEnhancedSelectionType extends eZDataType {
         $processAction = $actionlist[0];
         switch ( $processAction ) {
             case 'new-option-group':
-                $nextID = $this->getOptionNextId( $content );
-                $content['options'][] = array( 'id' => $nextID,
+                $row = array(
+                    'contentclassattribute_id' => $classAttribute->attribute( 'id' ),
                     'name' => '',
                     'identifier' => '',
-                    'options' => array(),
-                    'priority' => 1 );
+                    'type' => OWEnhancedSelection::OPTGROUP_TYPE
+                );
+                $option = new OWEnhancedSelection( $row );
+                $option->store();
                 break;
             case 'new-option':
-                $nextID = $this->getOptionNextId( $content );
+                $row = array(
+                    'contentclassattribute_id' => $classAttribute->attribute( 'id' ),
+                    'name' => '',
+                    'identifier' => '',
+                    'type' => OWEnhancedSelection::OPTION_TYPE
+                );
                 if ( isset( $actionlist[1] ) ) {
-                    foreach ( $content['options'] as $index => $option ) {
-                        if ( $option['id'] == $actionlist[1] ) {
-                            $content['options'][$index]['options'][] = array( 'id' => $nextID,
-                                'name' => '',
-                                'identifier' => '',
-                                'priority' => 1 );
-                        }
-                    }
-                } else {
-                    $content['options'][] = array( 'id' => $nextID,
-                        'name' => '',
-                        'identifier' => '',
-                        'priority' => 1 );
+                    $row['optgroup_id'] = $actionlist[1];
                 }
+                $option = new OWEnhancedSelection( $row );
+                $option->store();
                 break;
 
             case 'remove-selected-option':
@@ -220,20 +177,9 @@ class OWEnhancedSelectionType extends eZDataType {
                     $removeArray = $http->postVariable( $removeArrayName );
 
                     foreach ( $removeArray as $removeID ) {
-                        foreach ( $content['options'] as $index => $option ) {
-                            if ( $option['id'] == $removeID ) {
-                                unset( $content['options'][$index] );
-                                $content['options'] = array_values( $content['options'] );
-                                continue;
-                            } elseif ( isset( $option['options'] ) ) {
-                                foreach ( $option['options'] as $subIndex => $subOption ) {
-                                    if ( $subOption['id'] == $removeID ) {
-                                        unset( $content['options'][$index]['options'][$subIndex] );
-                                        $content['options'][$index]['options'] = array_values( $content['options'][$index]['options'] );
-                                        continue;
-                                    }
-                                }
-                            }
+                        $option = OWEnhancedSelection::fetch( array( 'id' => $removeID ) );
+                        if ( $option instanceof OWEnhancedSelection ) {
+                            $option->remove();
                         }
                     }
                 }
@@ -241,37 +187,13 @@ class OWEnhancedSelectionType extends eZDataType {
 
             case 'move-up':
                 if ( isset( $actionlist[1] ) && isset( $actionlist[2] ) ) {
-                    $this->swapRows( $actionlist[1], $actionlist[2], $content );
+                    OWEnhancedSelection::swapOptions( $actionlist[1], $actionlist[2] );
                 }
                 break;
 
             case 'move-down':
                 if ( isset( $actionlist[1] ) && isset( $actionlist[2] ) ) {
-                    $this->swapRows( $actionlist[1], $actionlist[2], $content );
-                }
-                break;
-
-            case 'sort-option-group':
-                $sortName = "{$base}_owenhancedselection_sort_order_{$id}";
-                if ( $http->hasPostVariable( $sortName ) ) {
-                    $sort = $http->postVariable( $sortName );
-
-                    if ( strpos( $sort, '_' ) !== false ) {
-                        list( $type, $ranking ) = explode( '_', $sort );
-
-
-
-// Use POST priorities instead of the stored ones
-// Otherwise you have to store new priorities before you can sort
-                        $priorityArray = array();
-                        if ( $type == 'prior' ) {
-                            $priorityArray = $http->postVariable( "{$base}_owenhancedselection_priority_{$id}" );
-                        }
-
-                        $content['options'] = $this->sortOptions( $content['options'], $type, $ranking, $priorityArray );
-                    } else {
-                        eZDebug::writeError( "Unknown sort value. Please use the form type_order (ex. alpha_asc)", "OWEnhancedSelectionType" );
-                    }
+                    OWEnhancedSelection::swapOptions( $actionlist[1], $actionlist[2] );
                 }
                 break;
 
@@ -301,7 +223,8 @@ class OWEnhancedSelectionType extends eZDataType {
         $classContent = $contentObjectAttribute->classContent();
         $content = $contentObjectAttribute->content();
 
-        $selectionName = join( '_', array( $base, 'owenhancedselection_selection', $id ) );
+        $selectionName = join( '_', array( $base, 'owenhancedselection_selection',
+            $id ) );
 
         if ( $http->hasPostVariable( $selectionName ) ) {
             $selection = $http->postVariable( $selectionName );
@@ -371,7 +294,8 @@ class OWEnhancedSelectionType extends eZDataType {
         $content = $objectAttribute->content();
         $nameArray = array();
 
-        $selectionName = join( '_', array( $base, 'owenhancedselection_selection', $id ) );
+        $selectionName = join( '_', array( $base, 'owenhancedselection_selection',
+            $id ) );
         $selection = $http->postVariable( $selectionName );
 
         if ( $http->hasPostVariable( $selectionName ) ) {
@@ -633,7 +557,8 @@ class OWEnhancedSelectionType extends eZDataType {
 
         $isRequired = $contentObjectAttribute->validateIsRequired();
 
-        $selectionName = join( '_', array( $base, 'owenhancedselection_selection', $id ) );
+        $selectionName = join( '_', array( $base, 'owenhancedselection_selection',
+            $id ) );
 
         if ( $http->hasPostVariable( $selectionName ) ) {
             $selection = $http->postVariable( $selectionName );
@@ -680,53 +605,6 @@ class OWEnhancedSelectionType extends eZDataType {
             }
         }
         return ++$maxID;
-    }
-
-    function sortOptions( $currentOptions, $type, $ranking, $priorityArray = array() ) {
-        $sortArray = array();
-        $sortOrder = SORT_ASC;
-        $sortType = SORT_STRING;
-        $numericSorts = array( 'prior' );
-        switch ( $ranking ) {
-            case 'desc':
-                $sortOrder = SORT_DESC;
-                break;
-
-            case 'asc':
-            default:
-                $sortOrder = SORT_ASC;
-                break;
-        }
-
-        if ( in_array( $type, $numericSorts ) ) {
-            $sortType = SORT_NUMERIC;
-        }
-        foreach ( array_keys( $currentOptions ) as $key ) {
-            $option = $currentOptions[$key];
-
-            switch ( $type ) {
-                case 'prior':
-                    if ( isset( $priorityArray[$option['id']] ) ) {
-                        $option['priority'] = $priorityArray[$option['id']];
-                    }
-                    $sortArray[] = $option['priority'];
-                    break;
-
-                case 'alpha':
-                default:
-                    $sortArray[] = $option['name'];
-                    break;
-            }
-
-            unset( $option );
-        }
-        array_multisort( $sortArray, $sortOrder, $sortType, $currentOptions );
-        foreach ( $currentOptions as $index => $options ) {
-            if ( isset( $options['options'] ) ) {
-                $currentOptions[$index]['options'] = $this->sortOptions( $options['options'], $type, $ranking, $priorityArray );
-            }
-        }
-        return $currentOptions;
     }
 
 }

@@ -16,16 +16,15 @@
                     <th style="width: 1%;" colspan="4">&nbsp;</th>
                     <th>{"Name"|i18n('design/standard/class/datatype')}</th>
                     <th>{"Identifier"|i18n('design/standard/class/datatype')}</th>
-                    <th>{"Priority"|i18n('design/standard/class/datatype')}</th>
                     <th style="width: 1%;">&nbsp;</th>
                 </tr>
                 {foreach $content.options as $option_index => $option_item}
                     {set $row_count = $row_count|inc()}
                     <tr class="{$bg_colors[$row_count|mod(2)]}">
-                        <td {if $option_item.options|is_set()}style="border-bottom: 1px solid black"{/if}>
+                        <td {if $option_item.type|eq('optgroup')}style="border-bottom: 1px solid black"{/if}>
                             {$option_index|inc()}.
                         </td>
-                        <td {if $option_item.options|is_set()}style="border-bottom: 1px solid black"{/if}>
+                        <td {if $option_item.type|eq('optgroup')}style="border-bottom: 1px solid black"{/if}>
                             <input type="checkbox"
                                    name="ContentClass_owenhancedselection_remove_{$id}[]"
                                    value="{$option_item.id}" />
@@ -35,9 +34,6 @@
                             <input type="hidden"
                                    name="ContentClass_owenhancedselection_id_{$id}[]"
                                    value="{$option_item.id}" />
-                            <input type="hidden"
-                                   name="ContentClass_owenhancedselection_type_{$id}[{$option_item.id}]"
-                                   value="{if $option_item.options|is_set()}group{else}option{/if}" />
                             <input type="text"
                                    name="ContentClass_owenhancedselection_name_{$id}[{$option_item.id}]"
                                    value="{$option_item.name|wash}" />
@@ -46,12 +42,6 @@
                             <input type="text"
                                    name="ContentClass_owenhancedselection_identifier_{$id}[{$option_item.id}]"
                                    value="{$option_item.identifier|wash}" />
-                        </td>
-                        <td>
-                            <input type="text"
-                                   name="ContentClass_owenhancedselection_priority_{$id}[{$option_item.id}]"
-                                   value="{$option_item.priority|wash}"
-                                   size="3" />
                         </td>
                         <td>
                             <div style="white-space: nowrap;">
@@ -72,7 +62,7 @@
                                        value="{$option_item.id}"
                                        title="{'Move down'|i18n('design/standard/class/datatype')}"
                                        {if $down_enabled|not}disabled="disabled"{/if} />
-                                {if $option_item.options|is_set()}
+                                {if $option_item.type|eq('optgroup')}
                                     <input type="submit"
                                            class="button btn"
                                            value="{'New option'|i18n('design/standard/class/datatype')}"
@@ -81,7 +71,7 @@
                             </div>
                         </td>
                     </tr>
-                    {foreach $option_item.options as $sub_option_index => $sub_option_item}
+                    {foreach $option_item.option_list as $sub_option_index => $sub_option_item}
                         {set $row_count = $row_count|inc()}
                         <tr class="{$bg_colors[$row_count|mod(2)]}">
                             <td colspan="2" style="border-right: 1px solid black;"></td>
@@ -109,28 +99,21 @@
                             </td>
 
                             <td>
-                                <input type="text"
-                                       name="ContentClass_owenhancedselection_priority_{$id}[{$sub_option_item.id}]"
-                                       value="{$sub_option_item.priority|wash}"
-                                       size="3" />
-                            </td>
-
-                            <td>
                                 <div style="white-space: nowrap;">
                                     {set $up_enabled=$sub_option_index|ne(0)
-                                         $down_enabled=$sub_option_index|lt(count($option_item.options)|dec())
+                                         $down_enabled=$sub_option_index|lt(count($option_item.option_list)|dec())
                                          $up_image=cond($up_enabled,"button-move_up.gif","button-move_up-disabled.gif")
                                          $down_image=cond($down_enabled,"button-move_down.gif","button-move_down-disabled.gif")}
                                     <input type="image"
                                            src={$up_image|ezimage}
-                                           {if $up_enabled}name="CustomActionButton[{$id}_move-up_{$sub_option_item.id}_{$option_item.options[$sub_option_index|dec()]['id']}]"{/if}
+                                           {if $up_enabled}name="CustomActionButton[{$id}_move-up_{$sub_option_item.id}_{$option_item.option_list[$sub_option_index|dec()]['id']}]"{/if}
                                            value="{$sub_option_item.id}"
                                            title="{'Move up'|i18n('design/standard/class/datatype')}"
                                            {if $up_enabled|not}disabled="disabled"{/if} />
 
                                     <input type="image"
                                            src={$down_image|ezimage}
-                                           {if $down_enabled}name="CustomActionButton[{$id}_move-down_{$sub_option_item.id}_{$option_item.options[$sub_option_index|inc()]['id']}]"{/if}
+                                           {if $down_enabled}name="CustomActionButton[{$id}_move-down_{$sub_option_item.id}_{$option_item.option_list[$sub_option_index|inc()]['id']}]"{/if}
                                            value="{$sub_option_item.id}"
                                            title="{'Move down'|i18n('design/standard/class/datatype')}"
                                            {if $down_enabled|not}disabled="disabled"{/if} />
@@ -155,19 +138,6 @@
                    {if count($content.options)|gt(0)}class="button btn"{else}class="btn" disabled="disabled"{/if}
                    value="{'Remove selected option(s)'|i18n('design/standard/class/datatype')}"
                    name="CustomActionButton[{$id}_remove-selected-option]" />
-
-            {* Sorting 1 option doesn't make sense *}
-            <input type="submit"
-                   {if count($content.options)|gt(1)}class="button btn"{else}class="btn" disabled="disabled"{/if}
-                   value="{'Sort options'|i18n('design/standard/class/datatype')}"
-                   name="CustomActionButton[{$id}_sort-option-group]" />
-
-            <select {if count($content.options)|le(1)}disabled="disabled"{/if}
-                                                      name="ContentClass_owenhancedselection_sort_order_{$id}">
-                <option value="alpha_asc">{"A-Z"|i18n('design/standard/class/datatype')}</option>
-                <option value="alpha_desc">{"Z-A"|i18n('design/standard/class/datatype')}</option>
-                <option value="prior_asc">{"Priority"|i18n('design/standard/class/datatype')}</option>
-            </select>
         </div>
     </fieldset>
 </div>
