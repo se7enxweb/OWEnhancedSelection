@@ -47,37 +47,37 @@ class OWEnhancedSelection extends eZPersistentObject {
         return array(
             'fields' => array(
                 'id' => array(
-                    'name' => 'ID',
+                    'name' => 'id',
                     'datatype' => 'integer',
                     'default' => null,
                     'required' => true ),
                 'contentclassattribute_id' => array(
-                    'name' => 'ContentClassAttributeID',
+                    'name' => 'contentclassattribute_id',
                     'datatype' => 'integer',
                     'default' => null,
                     'required' => true ),
                 'type' => array(
-                    'name' => 'Type',
+                    'name' => 'type',
                     'datatype' => 'string',
                     'default' => '',
                     'required' => true ),
                 'optgroup_id' => array(
-                    'name' => 'OptgroupID',
+                    'name' => 'optgroup_id',
                     'datatype' => 'integer',
                     'default' => 0,
                     'required' => true ),
                 'serialized_name_list' => array(
-                    'name' => 'SerializedNameList',
+                    'name' => 'serialized_name_list',
                     'datatype' => 'string',
                     'default' => '',
                     'required' => true ),
                 'identifier' => array(
-                    'name' => 'Identifier',
+                    'name' => 'identifier',
                     'datatype' => 'string',
                     'default' => '',
                     'required' => true ),
                 'priority' => array(
-                    'name' => 'Priority',
+                    'name' => 'priority',
                     'datatype' => 'integer',
                     'default' => false,
                     'required' => true )
@@ -126,7 +126,7 @@ class OWEnhancedSelection extends eZPersistentObject {
      * @return OWEnhancedSelection|null
      */
     protected function optgroup() {
-        return self::fetch( $this->attribute( 'optgroup_id' ) );
+        return self::fetch( array( 'id' => $this->attribute( 'optgroup_id' ) ) );
     }
 
     /**
@@ -291,6 +291,15 @@ class OWEnhancedSelection extends eZPersistentObject {
      */
     protected function topPriorityLanguageLocale() {
         return $this->NameList->topPriorityLanguageLocale();
+    }
+
+    /**
+     * Object ti string convertion
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return $this->attribute( 'identifier' );
     }
 
 }

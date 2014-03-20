@@ -1,23 +1,26 @@
-{let content=$attribute.content
-     classContent=$attribute.class_content
-     id=$attribute.id
-     i18n_context="extension/owenhancedselection/object/edit"
-     available_options=$classContent.options}
+{def  $content=$attribute.content
+      $class_content=$attribute.class_content}
 
-{section show=and(is_set($classContent.db_options),count($classContent.db_options)|gt(0))}
-    {set available_options=$classContent.db_options}
-{/section}
+<select name="ContentObjectAttribute_owenhancedselection_selection_{$attribute.id}[]"
+        {if $class_content.is_multiselect}multiple="multiple"{/if}>
 
-<select name="ContentObjectAttribute_owenhancedselection_selection_{$id}[]"
-        {section show=$classContent.is_multiselect}multiple="multiple"{/section}>
-        
-    {section var=option loop=$available_options}
-        <option value="{$option.item.identifier|wash}"
-                {section show=$content|contains($option.item.identifier)}selected="selected"{/section}>
-            {$option.item.name|wash}
-        </option>
-    {/section}      
-        
+    {foreach $class_content.available_options as $option}
+        {if $option.type|eq('optgroup')}
+            <optgroup label="{$option.name|wash}">
+                {foreach $option.option_list as $sub_option}
+                    <option value="{$sub_option.identifier|wash}"
+                            {if $content.identifiers|contains($sub_option.identifier)}selected="selected"{/if}>
+                        {$sub_option.name|wash}
+                    </option>
+                {/foreach}
+            </optgroup>
+        {else}
+            <option value="{$option.identifier|wash}"
+                    {if $content.identifiers|contains($option.identifier)}selected="selected"{/if}>
+                {$option.name|wash}
+            </option>
+        {/if}
+    {/foreach}      
 </select>
-     
-{/let}     
+
+{undef}     
