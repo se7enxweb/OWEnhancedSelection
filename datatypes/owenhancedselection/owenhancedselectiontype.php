@@ -231,9 +231,9 @@ class OWEnhancedSelectionType extends eZDataType {
         if ( $http->hasPostVariable( $selectionName ) ) {
             $selection = $http->postVariable( $selectionName );
 
-            $content = $selection;
+            $content['identifiers'] = $selection;
         } else if ( $classContent['is_multiselect'] == 1 ) {
-            $content = array();
+            $content['identifiers'] = array();
         }
 
         $contentObjectAttribute->setContent( $content );
@@ -269,11 +269,11 @@ class OWEnhancedSelectionType extends eZDataType {
                 }
             }
         }
-        return $content = array(
+        $content = array(
             'options' => $optionList,
             'identifiers' => $identifierList
         );
-        ;
+        return $content;
     }
 
     function hasObjectAttributeContent( $contentObjectAttribute ) {
@@ -295,7 +295,7 @@ class OWEnhancedSelectionType extends eZDataType {
     function storeObjectAttribute( $objectAttribute ) {
         $content = $objectAttribute->content();
 
-        $contentString = serialize( $content );
+        $contentString = serialize( $content['identifiers'] );
 
         $objectAttribute->setAttribute( 'data_text', $contentString );
     }
