@@ -1,6 +1,7 @@
 {def $content=$class_attribute.content
      $row_count = 0
      $bg_colors = array('bglight', 'bgdark')}
+     
 <label>{"Option list"|i18n('design/standard/class/datatype')}:</label>
 <table class="list" cellspacing="0">
     <tr>

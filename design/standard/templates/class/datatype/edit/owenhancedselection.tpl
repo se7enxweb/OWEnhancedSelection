@@ -6,6 +6,7 @@
 	 $down_image = "button-move_down-disabled.gif"
      $row_count = 0
      $bg_colors = array('bglight', 'bgdark')}
+     
 <div class="block">   
     <fieldset>
         <legend>{"Option list"|i18n('design/standard/class/datatype')}</legend>

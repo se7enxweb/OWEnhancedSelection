@@ -242,6 +242,8 @@ class OWEnhancedSelectionType extends eZDataType {
     }
 
     function objectAttributeContent( $contentObjectAttribute ) {
+        OWEnhancedSelection::$localeCode = $contentObjectAttribute->attribute( 'language_code' );
+
         $optionList = array();
         $identifierList = array();
         $contentString = $contentObjectAttribute->attribute( 'data_text' );
@@ -254,7 +256,7 @@ class OWEnhancedSelectionType extends eZDataType {
             $optionArray = (array) $option;
             if ( in_array( $optionArray['identifier'], $identifierList ) ) {
                 $optionList[] = $option;
-            }
+                }
             if ( $optionArray['type'] == OWEnhancedSelection::OPTGROUP_TYPE ) {
                 $subOptionList = $option instanceof OWEnhancedSelection ? $option->attribute( 'option_list' ) : $option['option_list'];
                 foreach ( $subOptionList as $subOption ) {
@@ -264,10 +266,10 @@ class OWEnhancedSelectionType extends eZDataType {
                             $subOption['optgroup'] = $option;
                         }
                         $optionList[] = $subOption;
+                        }
                     }
                 }
             }
-        }
         $content = array(
             'options' => $optionList,
             'identifiers' => $identifierList
