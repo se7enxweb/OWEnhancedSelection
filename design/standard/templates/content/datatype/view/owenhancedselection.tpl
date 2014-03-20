@@ -1,6 +1,6 @@
 {let content=$attribute.content
      classContent=$attribute.class_content
-     i18n_context="extension/owtreeselection/object/view"
+     i18n_context="extension/owenhancedselection/object/view"
      available_options=$classContent.options}
 
 {section show=and(is_set($classContent.db_options),count($classContent.db_options)|gt(0))}

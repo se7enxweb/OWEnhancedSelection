@@ -1,2 +1,2 @@
-OWTreeSelection
+OWEnhancedSelection
 ===============

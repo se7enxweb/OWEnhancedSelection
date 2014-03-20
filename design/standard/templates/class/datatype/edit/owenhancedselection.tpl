@@ -27,29 +27,29 @@
                         </td>
                         <td {if $option_item.options|is_set()}style="border-bottom: 1px solid black"{/if}>
                             <input type="checkbox"
-                                   name="ContentClass_owtreeselection_remove_{$id}[]"
+                                   name="ContentClass_owenhancedselection_remove_{$id}[]"
                                    value="{$option_item.id}" />
                         </td>
                         <td colspan="2"></td>
                         <td>
                             <input type="hidden"
-                                   name="ContentClass_owtreeselection_id_{$id}[]"
+                                   name="ContentClass_owenhancedselection_id_{$id}[]"
                                    value="{$option_item.id}" />
                             <input type="hidden"
-                                   name="ContentClass_owtreeselection_type_{$id}[{$option_item.id}]"
+                                   name="ContentClass_owenhancedselection_type_{$id}[{$option_item.id}]"
                                    value="{if $option_item.options|is_set()}group{else}option{/if}" />
                             <input type="text"
-                                   name="ContentClass_owtreeselection_name_{$id}[{$option_item.id}]"
+                                   name="ContentClass_owenhancedselection_name_{$id}[{$option_item.id}]"
                                    value="{$option_item.name|wash}" />
                         </td>
                         <td>
                             <input type="text"
-                                   name="ContentClass_owtreeselection_identifier_{$id}[{$option_item.id}]"
+                                   name="ContentClass_owenhancedselection_identifier_{$id}[{$option_item.id}]"
                                    value="{$option_item.identifier|wash}" />
                         </td>
                         <td>
                             <input type="text"
-                                   name="ContentClass_owtreeselection_priority_{$id}[{$option_item.id}]"
+                                   name="ContentClass_owenhancedselection_priority_{$id}[{$option_item.id}]"
                                    value="{$option_item.priority|wash}"
                                    size="3" />
                         </td>
@@ -90,27 +90,27 @@
                             </td>
                             <td>
                                 <input type="checkbox"
-                                       name="ContentClass_owtreeselection_remove_{$id}[]"
+                                       name="ContentClass_owenhancedselection_remove_{$id}[]"
                                        value="{$sub_option_item.id}" />
                             </td>
                             <td>
                                 <input type="hidden"
-                                       name="ContentClass_owtreeselection_id_{$id}[]"
+                                       name="ContentClass_owenhancedselection_id_{$id}[]"
                                        value="{$sub_option_item.id}" />
                                 <input type="text"
-                                       name="ContentClass_owtreeselection_name_{$id}[{$sub_option_item.id}]"
+                                       name="ContentClass_owenhancedselection_name_{$id}[{$sub_option_item.id}]"
                                        value="{$sub_option_item.name|wash}" />
                             </td>
 
                             <td>
                                 <input type="text"
-                                       name="ContentClass_owtreeselection_identifier_{$id}[{$sub_option_item.id}]"
+                                       name="ContentClass_owenhancedselection_identifier_{$id}[{$sub_option_item.id}]"
                                        value="{$sub_option_item.identifier|wash}" />
                             </td>
 
                             <td>
                                 <input type="text"
-                                       name="ContentClass_owtreeselection_priority_{$id}[{$sub_option_item.id}]"
+                                       name="ContentClass_owenhancedselection_priority_{$id}[{$sub_option_item.id}]"
                                        value="{$sub_option_item.priority|wash}"
                                        size="3" />
                             </td>
@@ -163,7 +163,7 @@
                    name="CustomActionButton[{$id}_sort-option-group]" />
 
             <select {if count($content.options)|le(1)}disabled="disabled"{/if}
-                                                      name="ContentClass_owtreeselection_sort_order_{$id}">
+                                                      name="ContentClass_owenhancedselection_sort_order_{$id}">
                 <option value="alpha_asc">{"A-Z"|i18n('design/standard/class/datatype')}</option>
                 <option value="alpha_desc">{"Z-A"|i18n('design/standard/class/datatype')}</option>
                 <option value="prior_asc">{"Priority"|i18n('design/standard/class/datatype')}</option>
@@ -175,14 +175,14 @@
     <div class="element">
         <label>{"Multiple choice"|i18n('design/standard/class/datatype')}:</label>
         <input type="checkbox"
-               name="ContentClass_owtreeselection_multi_{$id}"
+               name="ContentClass_owenhancedselection_multi_{$id}"
                {section show=$content.is_multiselect}checked="checked"{/section} />
     </div>
 
     <div class="element">
         <label>{"Delimiter"|i18n('design/standard/class/datatype')}:</label>
         <input type="text"
-               name="ContentClass_owtreeselection_delimiter_{$id}"
+               name="ContentClass_owenhancedselection_delimiter_{$id}"
                value="{$content.delimiter|wash}"
                size="5" />
     </div>
@@ -195,7 +195,7 @@
     <textarea rows="5"
               cols="80"
               class="box"
-              name="ContentClass_owtreeselection_query_{$id}">{$content.query|wash}</textarea>
+              name="ContentClass_owenhancedselection_query_{$id}">{$content.query|wash}</textarea>
 </div>       
 
 {undef}

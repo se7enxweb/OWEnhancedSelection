@@ -2,7 +2,7 @@
 /*
 
 [ExtensionSettings]
-DesignExtensions[]=owtreeselection
+DesignExtensions[]=owenhancedselection
 
 */
 

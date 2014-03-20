@@ -1,13 +1,14 @@
 {let content=$attribute.content
      classContent=$attribute.class_content
-     available_options=$classContent.options
-     id=$attribute.id}
+     id=$attribute.id
+     i18n_context="extension/owenhancedselection/object/edit"
+     available_options=$classContent.options}
 
 {section show=and(is_set($classContent.db_options),count($classContent.db_options)|gt(0))}
     {set available_options=$classContent.db_options}
 {/section}
 
-<select name="ContentObjectAttribute_owtreeselection_selection_{$id}[]"
+<select name="ContentObjectAttribute_owenhancedselection_selection_{$id}[]"
         {section show=$classContent.is_multiselect}multiple="multiple"{/section}>
         
     {section var=option loop=$available_options}
@@ -17,6 +18,6 @@
         </option>
     {/section}      
         
-</select>  
-
-{/let}
+</select>
+     
+{/let}     

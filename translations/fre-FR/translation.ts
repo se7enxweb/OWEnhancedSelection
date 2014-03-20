@@ -4,7 +4,7 @@
 	<context>
 		<name>kernel/classes/datatypes</name>
 		<message>
-			<source>Tree selection 2</source>
+			<source>Enhanced selection 2</source>
 			<comment>Datatype name</comment>
 			<translation>Sélection améliorée</translation>
 		</message>

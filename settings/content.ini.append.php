@@ -3,8 +3,8 @@
 /*
 
 [DataTypeSettings]
-ExtensionDirectories[]=owtreeselection
-AvailableDataTypes[]=owtreeselection
+ExtensionDirectories[]=owenhancedselection
+AvailableDataTypes[]=owenhancedselection
 
 */
 

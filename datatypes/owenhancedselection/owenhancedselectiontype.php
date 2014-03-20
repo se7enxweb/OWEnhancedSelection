@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Tree selection extension for eZ publish 4.x
+  Enhanced selection extension for eZ publish 4.x
   Copyright (C) 2003-2008  SCK-CEN (Belgian Nuclear Research Centre)
 
   This program is free software; you can redistribute it and/or modify
@@ -17,21 +17,21 @@
 
 
 /* !
-  \class   OWTreeSelectionType owtreeselectiontype.php
+  \class   OWEnhancedSelectionType owenhancedselectiontype.php
   \ingroup eZDatatype
-  \brief   Handles the datatype owtreeselection.
+  \brief   Handles the datatype owenhancedselection.
   \version 3.0
   \date    Tuesday 16 August 2005 9:56:00 am
   \author  Madeline Veyrenc
  */
 
-class OWTreeSelectionType extends eZDataType {
+class OWEnhancedSelectionType extends eZDataType {
 
-    const DATATYPESTRING = 'owtreeselection';
+    const DATATYPESTRING = 'owenhancedselection';
     const CONTENT_CLASS_STORAGE = 'data_text5';
 
     function __construct() {
-        $this->eZDataType( self::DATATYPESTRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Tree selection', 'Datatype name' ), array(
+        $this->eZDataType( self::DATATYPESTRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Enhanced selection', 'Datatype name' ), array(
             'serialize_supported' => true,
             'object_serialize_map' => array( 'data_text' => 'selection' )
         ) );
@@ -43,7 +43,7 @@ class OWTreeSelectionType extends eZDataType {
 
     function validateClassAttributeHTTPInput( $http, $base, $classAttribute ) {
         $id = $classAttribute->attribute( 'id' );
-        $queryName = join( '_', array( $base, 'owtreeselection_query', $id ) );
+        $queryName = join( '_', array( $base, 'owenhancedselection_query', $id ) );
 
         if ( $http->hasPostvariable( $queryName ) ) {
             $query = trim( $http->postVariable( $queryName ) );
@@ -62,16 +62,16 @@ class OWTreeSelectionType extends eZDataType {
         $content = $classAttribute->content();
         $id = $classAttribute->attribute( 'id' );
 
-        $idArrayName = "{$base}_owtreeselection_id_{$id}";
-        $nameArrayName = "{$base}_owtreeselection_name_{$id}";
-        $identifierArrayName = "{$base}_owtreeselection_identifier_{$id}";
-        $priorityArrayName = "{$base}_owtreeselection_priority_{$id}";
-        $typeArrayName = "{$base}_owtreeselection_type_{$id}";
+        $idArrayName = "{$base}_owenhancedselection_id_{$id}";
+        $nameArrayName = "{$base}_owenhancedselection_name_{$id}";
+        $identifierArrayName = "{$base}_owenhancedselection_identifier_{$id}";
+        $priorityArrayName = "{$base}_owenhancedselection_priority_{$id}";
+        $typeArrayName = "{$base}_owenhancedselection_type_{$id}";
 
-        $multiSelectName = "{$base}_owtreeselection_multi_{$id}";
-        $delimiterName = "{$base}_owtreeselection_delimiter_{$id}";
+        $multiSelectName = "{$base}_owenhancedselection_multi_{$id}";
+        $delimiterName = "{$base}_owenhancedselection_delimiter_{$id}";
 
-        $queryName = "{$base}_owtreeselection_query_{$id}";
+        $queryName = "{$base}_owenhancedselection_query_{$id}";
 
         if ( $http->hasPostVariable( $idArrayName ) ) {
             $idArray = $http->postVariable( $idArrayName );
@@ -140,7 +140,7 @@ class OWTreeSelectionType extends eZDataType {
 
           $content['db_options'] = $this->getDbOptions( $content );
 
-          $queryName = join( '_', array( 'ContentClass_owtreeselection_query', $classAttribute->attribute( 'id' ) ) );
+          $queryName = join( '_', array( 'ContentClass_owenhancedselection_query', $classAttribute->attribute( 'id' ) ) );
           $http = eZHTTPTool::instance();
 
           if ( empty( $content['query'] ) and
@@ -176,7 +176,7 @@ class OWTreeSelectionType extends eZDataType {
         $base = "ContentClass";
         $content = $classAttribute->content();
 
-        $idArrayName = "{$base}_owtreeselection_id_{$id}";
+        $idArrayName = "{$base}_owenhancedselection_id_{$id}";
         $idArray = array();
 
         if ( $http->hasPostVariable( $idArrayName ) ) {
@@ -214,7 +214,7 @@ class OWTreeSelectionType extends eZDataType {
                 break;
 
             case 'remove-selected-option':
-                $removeArrayName = "{$base}_owtreeselection_remove_{$id}";
+                $removeArrayName = "{$base}_owenhancedselection_remove_{$id}";
 
                 if ( $http->hasPostVariable( $removeArrayName ) ) {
                     $removeArray = $http->postVariable( $removeArrayName );
@@ -252,7 +252,7 @@ class OWTreeSelectionType extends eZDataType {
                 break;
 
             case 'sort-option-group':
-                $sortName = "{$base}_owtreeselection_sort_order_{$id}";
+                $sortName = "{$base}_owenhancedselection_sort_order_{$id}";
                 if ( $http->hasPostVariable( $sortName ) ) {
                     $sort = $http->postVariable( $sortName );
 
@@ -265,18 +265,18 @@ class OWTreeSelectionType extends eZDataType {
 // Otherwise you have to store new priorities before you can sort
                         $priorityArray = array();
                         if ( $type == 'prior' ) {
-                            $priorityArray = $http->postVariable( "{$base}_owtreeselection_priority_{$id}" );
+                            $priorityArray = $http->postVariable( "{$base}_owenhancedselection_priority_{$id}" );
                         }
 
                         $content['options'] = $this->sortOptions( $content['options'], $type, $ranking, $priorityArray );
                     } else {
-                        eZDebug::writeError( "Unknown sort value. Please use the form type_order (ex. alpha_asc)", "OWTreeSelectionType" );
+                        eZDebug::writeError( "Unknown sort value. Please use the form type_order (ex. alpha_asc)", "OWEnhancedSelectionType" );
                     }
                 }
                 break;
 
             default:
-                eZDebug::writeError( "Unknown class HTTP action: $action", "OWTreeSelectionType" );
+                eZDebug::writeError( "Unknown class HTTP action: $action", "OWEnhancedSelectionType" );
                 break;
         }
 
@@ -301,7 +301,7 @@ class OWTreeSelectionType extends eZDataType {
         $classContent = $contentObjectAttribute->classContent();
         $content = $contentObjectAttribute->content();
 
-        $selectionName = join( '_', array( $base, 'owtreeselection_selection', $id ) );
+        $selectionName = join( '_', array( $base, 'owenhancedselection_selection', $id ) );
 
         if ( $http->hasPostVariable( $selectionName ) ) {
             $selection = $http->postVariable( $selectionName );
@@ -371,7 +371,7 @@ class OWTreeSelectionType extends eZDataType {
         $content = $objectAttribute->content();
         $nameArray = array();
 
-        $selectionName = join( '_', array( $base, 'owtreeselection_selection', $id ) );
+        $selectionName = join( '_', array( $base, 'owenhancedselection_selection', $id ) );
         $selection = $http->postVariable( $selectionName );
 
         if ( $http->hasPostVariable( $selectionName ) ) {
@@ -633,7 +633,7 @@ class OWTreeSelectionType extends eZDataType {
 
         $isRequired = $contentObjectAttribute->validateIsRequired();
 
-        $selectionName = join( '_', array( $base, 'owtreeselection_selection', $id ) );
+        $selectionName = join( '_', array( $base, 'owenhancedselection_selection', $id ) );
 
         if ( $http->hasPostVariable( $selectionName ) ) {
             $selection = $http->postVariable( $selectionName );
@@ -731,4 +731,4 @@ class OWTreeSelectionType extends eZDataType {
 
 }
 
-eZDataType::register( OWTreeSelectionType::DATATYPESTRING, "owtreeselectiontype" );
+eZDataType::register( OWEnhancedSelectionType::DATATYPESTRING, "owenhancedselectiontype" );
