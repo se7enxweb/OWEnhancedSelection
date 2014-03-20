@@ -516,36 +516,6 @@ class OWEnhancedSelectionType extends eZDataType {
         return false;
     }
 
-    function swapRows( $optionID1, $optionID2, &$content ) {
-        foreach ( $content['options'] as $index1 => $option1 ) {
-            if ( $option1['id'] == $optionID1 ) {
-                $tmpOption1 = $option1;
-                foreach ( $content['options'] as $index2 => $option2 ) {
-                    if ( $option2['id'] == $optionID2 ) {
-                        $content['options'][$index1] = $option2;
-                        $content['options'][$index2] = $tmpOption1;
-                        continue;
-                    }
-                }
-                continue;
-            } elseif ( isset( $option1['options'] ) ) {
-                foreach ( $option1['options'] as $subIndex1 => $subOption1 ) {
-                    if ( $subOption1['id'] == $optionID1 ) {
-                        $tmpOption1 = $subOption1;
-                        foreach ( $option1['options'] as $subIndex2 => $subOption2 ) {
-                            if ( $subOption2['id'] == $optionID2 ) {
-                                $content['options'][$index1]['options'][$subIndex1] = $option2;
-                                $content['options'][$index1]['options'][$subIndex2] = $tmpOption1;
-                                continue;
-                            }
-                        }
-                        continue;
-                    }
-                }
-            }
-        }
-    }
-
     function isDbQueryValid( $sql ) {
         $db = eZDB::instance();
         eZDB::setErrorHandling( eZDB::ERROR_HANDLING_EXCEPTIONS );
@@ -642,21 +612,14 @@ class OWEnhancedSelectionType extends eZDataType {
         return eZInputValidator::STATE_ACCEPTED;
     }
 
-    function getOptionNextId( $content ) {
-        $maxID = 0;
-        foreach ( $content['options'] as $option ) {
-            if ( intval( $option['id'] ) > $maxID ) {
-                $maxID = intval( $option['id'] );
-            }
-            if ( isset( $option['options'] ) ) {
-                foreach ( $option['options'] as $subOption ) {
-                    if ( intval( $subOption['id'] ) > $maxID ) {
-                        $maxID = intval( $subOption['id'] );
-                    }
-                }
-            }
-        }
-        return ++$maxID;
+    function fromString( $objectAttribute, $string ) {
+        $content = unserialize( $string );
+        $objectAttribute->setContent( $content );
+    }
+
+    function toString( $objectAttribute ) {
+        $content = $objectAttribute->content();
+        return serialize( $content['identifiers'] );
     }
 
 }
