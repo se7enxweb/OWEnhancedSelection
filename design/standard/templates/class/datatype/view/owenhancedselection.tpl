@@ -12,11 +12,11 @@
     {foreach $content.options as $option_index => $option_item}
         {set $row_count = $row_count|inc()}
         <tr class="{$bg_colors[$row_count|mod(2)]}">
-            <td colspan="2">{if $option_item.options|is_set()}<b>{/if}{$option_index|inc()}.{if $option_item.options|is_set()}</b>{/if}</td>
-            <td>{if $option_item.options|is_set()}<b>{/if}{first_set($option_item.name|wash,"&nbsp;")}{if $option_item.options|is_set()}</b>{/if}</td>
-            <td>{if $option_item.options|is_set()}<b>{/if}{first_set($option_item.identifier|wash,"&nbsp;")}{if $option_item.options|is_set()}</b>{/if}</td>
+            <td colspan="2">{if $option_item.type|eq('optgroup')}<b>{/if}{$option_index|inc()}.{if $option_item.type|eq('optgroup')}</b>{/if}</td>
+            <td>{if $option_item.type|eq('optgroup')}<b>{/if}{first_set($option_item.name|wash,"&nbsp;")}{if $option_item.type|eq('optgroup')}</b>{/if}</td>
+            <td>{if $option_item.type|eq('optgroup')}<b>{/if}{first_set($option_item.identifier|wash,"&nbsp;")}{if $option_item.type|eq('optgroup')}</b>{/if}</td>
         </tr>
-        {foreach $option_item.options as $sub_option_index => $sub_option_item}
+        {foreach $option_item.option_list as $sub_option_index => $sub_option_item}
             {set $row_count = $row_count|inc()}
             <tr class="{$bg_colors[$row_count|mod(2)]}">
                 <td></td>
