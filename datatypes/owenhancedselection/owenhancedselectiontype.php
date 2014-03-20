@@ -249,7 +249,6 @@ class OWEnhancedSelectionType extends eZDataType {
             $identifierList = unserialize( $contentString );
         }
         $classAttributeContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
-
         $availableOptions = $classAttributeContent['available_options'];
         foreach ( $availableOptions as $option ) {
             $optionArray = (array) $option;
@@ -317,7 +316,6 @@ class OWEnhancedSelectionType extends eZDataType {
     function fetchCollectionAttributeHTTPInput( $collection, $collectionAttribute, $http, $base, $objectAttribute ) {
         $id = $objectAttribute->attribute( 'id' );
         $classContent = $objectAttribute->classContent();
-        $content = $objectAttribute->content();
         $nameArray = array();
 
         $selectionName = join( '_', array( $base, 'owenhancedselection_selection',
@@ -328,20 +326,23 @@ class OWEnhancedSelectionType extends eZDataType {
             $selection = $http->postVariable( $selectionName );
 
             if ( count( $selection ) > 0 ) {
-                $options = $classContent['options'];
-
-                if ( isset( $classContent['db_options'] ) and count( $classContent['db_options'] ) > 0 ) {
-                    unset( $options );
-                    $options = $classContent['db_options'];
-                }
-
-                foreach ( $options as $option ) {
-                    if ( in_array( $option['identifier'], $selection ) ) {
+                $classAttributeContent = $this->classAttributeContent( $objectAttribute->attribute( 'contentclass_attribute' ) );
+                $availableOptions = $classAttributeContent['available_options'];
+                foreach ( $availableOptions as $option ) {
+                    $optionArray = (array) $option;
+                    if ( in_array( $optionArray['identifier'], $selection ) ) {
                         $nameArray[] = $option['name'];
                     }
+                    if ( $optionArray['type'] == OWEnhancedSelection::OPTGROUP_TYPE ) {
+                        $subOptionList = $option instanceof OWEnhancedSelection ? $option->attribute( 'option_list' ) : $option['option_list'];
+                        foreach ( $subOptionList as $subOption ) {
+                            $subOptionArray = (array) $subOption;
+                            if ( in_array( $subOptionArray['identifier'], $selection ) ) {
+                                $nameArray[] = $option['name'] . '/' . $subOption['name'];
+                            }
+                        }
+                    }
                 }
-
-                unset( $options );
             }
         }
 
