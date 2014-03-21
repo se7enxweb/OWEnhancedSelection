@@ -134,9 +134,31 @@ class OWEnhancedSelectionType extends eZDataType {
     }
 
     function deleteStoredClassAttribute( $classAttribute, $version = null ) {
-        $content = $classAttribute->content();
+        if ( $version === null ) {
+            $content = $classAttribute->content();
+            foreach ( $content['options'] as $option ) {
+                $option->remove();
+            }
+        }
+    }
+
+    function cloneClassAttribute( $oldClassAttribute, $newClassAttribute ) {
+        $newClassAttribute->store();
+        $content = $oldClassAttribute->content();
         foreach ( $content['options'] as $option ) {
-            $option->remove();
+            $newOption = clone( $option );
+            $newOption->setAttribute( 'id', null );
+            $newOption->setAttribute( 'contentclassattribute_id', $newClassAttribute->attribute( 'id' ) );
+            $newOption->store();
+            if ( $option->attribute( 'has_option' ) ) {
+                foreach ( $option->attribute( 'option_list' ) as $subOption ) {
+                    $newSubOption = clone( $subOption );
+                    $newSubOption->setAttribute( 'id', null );
+                    $newSubOption->setAttribute( 'contentclassattribute_id', $newClassAttribute->attribute( 'id' ) );
+                    $newSubOption->setAttribute( 'optgroup_id', $newOption->attribute( 'id' ) );
+                    $newSubOption->store();
+                }
+            }
         }
     }
 
