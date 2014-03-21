@@ -21,7 +21,6 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
             $optionList = array();
             foreach ( $content['options'] as $option ) {
                 $optionArray = array(
-                    'type' => $option->attribute( 'type' ),
                     'identifier' => $option->attribute( 'identifier' ),
                     'priority' => $option->attribute( 'priority' ),
                     'name' => OWMigrationTools::cleanupNameList( $option->attribute( 'nameList' ) )
@@ -30,13 +29,14 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
                     $optionArray['option_list'] = array();
                     foreach ( $option->attribute( 'option_list' ) as $subOption ) {
                         $subOptionArray = array(
-                            'type' => $subOption->attribute( 'type' ),
                             'identifier' => $subOption->attribute( 'identifier' ),
                             'priority' => $subOption->attribute( 'priority' ),
                             'name' => OWMigrationTools::cleanupNameList( $subOption->attribute( 'nameList' ) )
                         );
                         $optionArray['option_list'][] = $subOptionArray;
                     }
+                } elseif ( $option->attribute( 'type' ) == OWEnhancedSelection::OPTGROUP_TYPE ) {
+                    $optionArray['type'] = $option->attribute( 'type' );
                 }
                 $optionList[] = $optionArray;
             }
