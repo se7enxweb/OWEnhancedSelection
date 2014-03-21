@@ -31,9 +31,8 @@ class OWEnhancedSelection extends eZPersistentObject {
             OPTION_TYPE = 'option',
             OPTGROUP_TYPE = 'optgroup';
 
-    
     public static $localeCode = false;
-    
+
     public function __construct( $row ) {
         if ( is_array( $row ) ) {
             $this->eZPersistentObject( $row );
@@ -86,6 +85,7 @@ class OWEnhancedSelection extends eZPersistentObject {
                     'required' => true )
             ),
             'keys' => array( 'id' ),
+            'increment_key' => 'id',
             'class_name' => 'OWEnhancedSelection',
             'name' => 'owenhancedselection',
             'function_attributes' => array(
@@ -167,7 +167,7 @@ class OWEnhancedSelection extends eZPersistentObject {
       @return string
      */
     public function name( $languageLocale = false ) {
-        if( !$languageLocale ) {
+        if ( !$languageLocale ) {
             $languageLocale = self::$localeCode;
         }
         return $this->NameList->name( $languageLocale );
