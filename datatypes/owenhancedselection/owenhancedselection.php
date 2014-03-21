@@ -84,7 +84,7 @@ class OWEnhancedSelection extends eZPersistentObject {
                     'default' => false,
                     'required' => true )
             ),
-            'keys' => array( 'id' ),
+            'keys' => array( 'contentclassattribute_id', 'identifier' ),
             'increment_key' => 'id',
             'class_name' => 'OWEnhancedSelection',
             'name' => 'owenhancedselection',
@@ -138,9 +138,12 @@ class OWEnhancedSelection extends eZPersistentObject {
      * @return boolean
      */
     protected function hasOption() {
+        if( $this->attribute( 'id' ) == null ) {
+            return false;
+        }
         return self::countList( array(
                     'optgroup_id' => $this->attribute( 'id' ) )
-        );
+        ) > 0;
     }
 
     /**
@@ -258,6 +261,12 @@ class OWEnhancedSelection extends eZPersistentObject {
      * @param array $fieldFilters
      */
     function store( $store_childs = false, $fieldFilters = null ) {
+        if ( $this->attribute( 'identifier' ) == '' ) {
+            $this->setAttribute( 'identifier', $this->generateIdentifier() );
+        }
+        if ( $this->attribute( 'type' ) == '' ) {
+            $this->setAttribute( 'type', self::OPTION_TYPE );
+        }
         $this->setAttribute( 'serialized_name_list', $this->NameList->serializeNames() );
         parent::store( $store_childs, $fieldFilters );
     }
@@ -297,6 +306,27 @@ class OWEnhancedSelection extends eZPersistentObject {
      */
     protected function topPriorityLanguageLocale() {
         return $this->NameList->topPriorityLanguageLocale();
+    }
+
+    protected function generateIdentifier() {
+        $name = $this->attribute( 'name' );
+        if ( empty( $name ) ) {
+            return '';
+        }
+
+        $identifier = $name;
+
+        $trans = eZCharTransform::instance();
+        $generatedIdentifier = $trans->transformByGroup( $identifier, 'identifier' );
+
+        $identifierCount = self::countList( array(
+                    'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
+                    'identifier' => $generatedIdentifier,
+                ) );
+        if ( $identifierCount > 0 ) {
+            $generatedIdentifier .= "_$identifierCount";
+        }
+        return $generatedIdentifier;
     }
 
     /**

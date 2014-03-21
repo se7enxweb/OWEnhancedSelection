@@ -53,6 +53,7 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
                 $selectSubOptionValueList = array();
                 if ( array_key_exists( 'option_list', $value ) ) {
                     $selectSubOptionValueList = $value['option_list'];
+                    $value['type'] = OWEnhancedSelection::OPTGROUP_TYPE;
                     unset( $value['option_list'] );
                 }
                 $selectOption = new OWEnhancedSelection( $value );

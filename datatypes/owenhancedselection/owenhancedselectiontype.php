@@ -77,7 +77,7 @@ class OWEnhancedSelectionType extends eZDataType {
             $identifierArray = $http->postVariable( $identifierArrayName );
             foreach ( $idArray as $id ) {
                 $name = isset( $nameArray[$id] ) ? $nameArray[$id] : '';
-                $identifier = isset( $identifierArray[$id] ) && !empty( $identifierArray[$id] ) ? $identifierArray[$id] : $this->generateIdentifier( $name, $identifierArray );
+                $identifier = isset( $identifierArray[$id] ) ? $identifierArray[$id] : '';
                 $option = OWEnhancedSelection::fetch( array( 'id' => $id ) );
                 if ( $option instanceof OWEnhancedSelection ) {
                     $option->setName( $name, $classAttribute->editLocale() );
@@ -489,37 +489,6 @@ class OWEnhancedSelectionType extends eZDataType {
 
     function sortKeyType() {
         return 'string';
-    }
-
-    function generateIdentifier( $name, $identifierArray = array() ) {
-        if ( empty( $name ) ) {
-            return '';
-        }
-
-        $identifier = $name;
-
-        $trans = eZCharTransform::instance();
-        $generatedIdentifier = $trans->transformByGroup( $identifier, 'identifier' );
-
-
-// We have $generatedIdentifier now, check for existance
-        if ( is_array( $identifierArray ) and
-                count( $identifierArray ) > 0 and
-                in_array( $generatedIdentifier, $identifierArray ) ) {
-            $highestNumber = 0;
-
-            foreach ( $identifierArray as $ident ) {
-                if ( preg_match( '/^' . $generatedIdentifier . '__(\d+)$/', $ident, $matchArray ) ) {
-                    if ( $matchArray[1] > $highestNumber ) {
-                        $highestNumber = $matchArray[1];
-                    }
-                }
-            }
-
-            $generatedIdentifier .= "__" . ++$highestNumber;
-        }
-
-        return $generatedIdentifier;
     }
 
     /**
