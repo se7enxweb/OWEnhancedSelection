@@ -133,6 +133,13 @@ class OWEnhancedSelectionType extends eZDataType {
         $classAttribute->setAttribute( self::CONTENT_CLASS_STORAGE, serialize( $content ) );
     }
 
+    function deleteStoredClassAttribute( $classAttribute, $version = null ) {
+        $content = $classAttribute->content();
+        foreach ( $content['options'] as $option ) {
+            $option->remove();
+        }
+    }
+
     function customClassAttributeHTTPAction( $http, $action, $classAttribute ) {
         $id = $classAttribute->attribute( 'id' );
         $base = "ContentClass";
@@ -256,7 +263,7 @@ class OWEnhancedSelectionType extends eZDataType {
             $optionArray = (array) $option;
             if ( in_array( $optionArray['identifier'], $identifierList ) ) {
                 $optionList[] = $option;
-                }
+            }
             if ( $optionArray['type'] == OWEnhancedSelection::OPTGROUP_TYPE ) {
                 $subOptionList = $option instanceof OWEnhancedSelection ? $option->attribute( 'option_list' ) : $option['option_list'];
                 foreach ( $subOptionList as $subOption ) {
@@ -266,10 +273,10 @@ class OWEnhancedSelectionType extends eZDataType {
                             $subOption['optgroup'] = $option;
                         }
                         $optionList[] = $subOption;
-                        }
                     }
                 }
             }
+        }
         $content = array(
             'options' => $optionList,
             'identifiers' => $identifierList
