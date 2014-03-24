@@ -29,16 +29,12 @@ class OWEnhancedSelectionType extends eZDataType {
 
     const DATATYPESTRING = 'owenhancedselection';
     const CONTENT_CLASS_STORAGE = 'data_text5';
-    protected $defaultDelimiter;
 
     function __construct() {
         $this->eZDataType( self::DATATYPESTRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Enhanced selection (OW)', 'Datatype name' ), array(
             'serialize_supported' => true,
             'object_serialize_map' => array( 'data_text' => 'selection' )
         ) );
-
-        $INI = eZINI::instance( 'owenhancedselection.ini' );
-        $this->defaultDelimiter = $INI->variable('OwenhancedselectionsSettings', 'DefaultDelimiter');
     }
 
     /*     * ******
@@ -384,7 +380,7 @@ class OWEnhancedSelectionType extends eZDataType {
         $delimiter = $classContent['delimiter'];
 
         if ( empty( $delimiter ) ) {
-            $delimiter = $this->defaultDelimiter;
+            $delimiter = ', ';
         }
 
         $dataText = join( $delimiter, $nameArray );
@@ -466,7 +462,7 @@ class OWEnhancedSelectionType extends eZDataType {
             $delimiter = $classContent['delimiter'];
 
             if ( empty( $delimiter ) ) {
-                $delimiter = $this->defaultDelimiter;
+                $delimiter = ", ";
             }
 
             $titleString = join( $delimiter, $titleArray );
@@ -629,4 +625,3 @@ class OWEnhancedSelectionType extends eZDataType {
 }
 
 eZDataType::register( OWEnhancedSelectionType::DATATYPESTRING, "owenhancedselectiontype" );
-
