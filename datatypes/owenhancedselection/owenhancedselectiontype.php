@@ -274,10 +274,10 @@ class OWEnhancedSelectionType extends eZDataType {
         OWEnhancedSelection::$localeCode = $contentObjectAttribute->attribute( 'language_code' );
 
         $optionList = array();
-        $identifierList = array();
         $contentString = $contentObjectAttribute->attribute( 'data_text' );
-        if ( !empty( $contentString ) ) {
-            $identifierList = unserialize( $contentString );
+        $identifierList = unserialize( $contentString );
+        if ( !is_array( $identifierList ) ) {
+            $identifierList = array();
         }
         $classAttributeContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
         $availableOptions = $classAttributeContent['available_options'];
@@ -481,7 +481,7 @@ class OWEnhancedSelectionType extends eZDataType {
 
     function sortKey( $objectAttribute ) {
         $content = $objectAttribute->content();
-        $contentString = join( ' ', $content );
+        $contentString = join( ' ', $content['options'] );
         $contentString = strtolower( $contentString );
 
         return $contentString;
@@ -613,7 +613,10 @@ class OWEnhancedSelectionType extends eZDataType {
     }
 
     function fromString( $objectAttribute, $string ) {
-        $content = unserialize( $string );
+        $content = array(
+            'options' => array(),
+            'identifiers' => unserialize( $string )
+        );
         $objectAttribute->setContent( $content );
     }
 
