@@ -138,12 +138,12 @@ class OWEnhancedSelection extends eZPersistentObject {
      * @return boolean
      */
     protected function hasOption() {
-        if( $this->attribute( 'id' ) == null ) {
+        if ( $this->attribute( 'id' ) == null ) {
             return false;
         }
         return self::countList( array(
                     'optgroup_id' => $this->attribute( 'id' ) )
-        ) > 0;
+                ) > 0;
     }
 
     /**
@@ -269,6 +269,15 @@ class OWEnhancedSelection extends eZPersistentObject {
         }
         $this->setAttribute( 'serialized_name_list', $this->NameList->serializeNames() );
         parent::store( $store_childs, $fieldFilters );
+        if ( $this->attribute( 'id' ) == null ) {
+            $object = self::fetch( array(
+                        'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
+                        'identifier' => $this->attribute( 'identifier' )
+                    ) );
+            if ( $object ) {
+                $this->setAttribute( 'id', $object->attribute( 'id' ) );
+            }
+        }
     }
 
     /**
