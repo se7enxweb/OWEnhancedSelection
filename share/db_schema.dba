@@ -32,7 +32,7 @@ $schema = array(
                 'default' => false,
             ),
             'identifier' => array(
-                'length' => 40,
+                'length' => 200,
                 'type' => 'varchar',
                 'not_null' => FALSE,
                 'default' => FALSE,
