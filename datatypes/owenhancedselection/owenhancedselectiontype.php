@@ -29,6 +29,7 @@ class OWEnhancedSelectionType extends eZDataType {
 
     const DATATYPESTRING = 'owenhancedselection';
     const CONTENT_CLASS_STORAGE = 'data_text5';
+
     protected $defaultDelimiter;
 
     function __construct() {
@@ -38,7 +39,7 @@ class OWEnhancedSelectionType extends eZDataType {
         ) );
 
         $INI = eZINI::instance( 'owenhancedselection.ini' );
-        $this->defaultDelimiter = $INI->variable('OwenhancedselectionsSettings', 'DefaultDelimiter');
+        $this->defaultDelimiter = $INI->variable( 'Delimiter', 'Default' );
     }
 
     /*     * ******
