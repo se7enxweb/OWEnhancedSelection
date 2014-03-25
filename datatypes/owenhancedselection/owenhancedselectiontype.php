@@ -288,10 +288,7 @@ class OWEnhancedSelectionType extends eZDataType {
         $availableOptions = $classAttributeContent['available_options'];
         foreach ( $availableOptions as $option ) {
             $optionArray = (array) $option;
-            if ( in_array( $optionArray['identifier'], $identifierList ) ) {
-                $optionList[] = $option;
-            }
-            if ( $optionArray['type'] == OWEnhancedSelection::OPTGROUP_TYPE ) {
+            if ( isset( $optionArray['type'] ) && $optionArray['type'] == OWEnhancedSelection::OPTGROUP_TYPE ) {
                 $subOptionList = $option instanceof OWEnhancedSelection ? $option->attribute( 'option_list' ) : $option['option_list'];
                 foreach ( $subOptionList as $subOption ) {
                     $subOptionArray = (array) $subOption;
@@ -301,6 +298,10 @@ class OWEnhancedSelectionType extends eZDataType {
                         }
                         $optionList[] = $subOption;
                     }
+                }
+            } else {
+                if ( in_array( $optionArray['identifier'], $identifierList ) ) {
+                    $optionList[] = $option;
                 }
             }
         }
@@ -548,24 +549,33 @@ class OWEnhancedSelectionType extends eZDataType {
             if ( isset( $firstRes['g_identifier'] ) && isset( $firstRes['g_name'] ) ) {
                 $newRes = array();
                 foreach ( $res as $res_item ) {
-                    if ( !isset( $newRes[$res_item['g_identifier']] ) ) {
-                        $newRes[$res_item['g_identifier']] = array(
-                            'name' => $res_item['g_name'],
-                            'identifier' => $res_item['g_identifier'],
-                            'type' => OWEnhancedSelection::OPTGROUP_TYPE,
-                            'option_list' => array()
+                    if ( $res_item['g_identifier'] ) {
+                        if ( !isset( $newRes[$res_item['g_identifier']] ) ) {
+                            $newRes[$res_item['g_identifier']] = array(
+                                'name' => $res_item['g_name'],
+                                'identifier' => $res_item['g_identifier'],
+                                'type' => OWEnhancedSelection::OPTGROUP_TYPE,
+                                'option_list' => array()
+                            );
+                        }
+                        $newRes[$res_item['g_identifier']]['option_list'][] = array(
+                            'name' => $res_item['name'],
+                            'identifier' => $res_item['identifier'],
+                            'type' => OWEnhancedSelection::OPTION_TYPE
+                        );
+                    } else {
+                        $newRes[] = array(
+                            'name' => $res_item['name'],
+                            'identifier' => $res_item['identifier'],
+                            'type' => OWEnhancedSelection::OPTION_TYPE
                         );
                     }
-                    $newRes[$res_item['g_identifier']]['option_list'][] = array(
-                        'name' => $res_item['name'],
-                        'identifier' => $res_item['identifier'],
-                    );
                 }
                 $res = $newRes;
             }
             if ( is_array( $res ) and count( $res ) > 0 ) {
                 if ( $classContent['is_multiselect'] == 0 ) {
-                    $ret = array_merge( array( array( 'name' => '', 'identifier' => '' ) ), $res );
+                    $ret = array_merge( array( array( 'name' => '', 'identifier' => '', 'type' => OWEnhancedSelection::OPTION_TYPE ) ), $res );
                 } else {
                     $ret = $res;
                 }
