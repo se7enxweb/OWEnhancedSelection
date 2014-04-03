@@ -487,8 +487,7 @@ class OWEnhancedSelectionType extends eZDataType {
 
     function sortKey( $objectAttribute ) {
         $content = $objectAttribute->content();
-        $contentString = join( ' ', $content['options'] );
-        $contentString = strtolower( $contentString );
+        $contentString = is_array( $content['identifiers'] ) ? strtolower( implode( ' ', $content['identifiers'] ) ) : "";
 
         return $contentString;
     }
