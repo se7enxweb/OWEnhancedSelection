@@ -49,6 +49,10 @@ class OWEnhancedSelectionExtendedAttributeFilter {
                         $regexp = '"[[:<:]](' . implode( '|', $paramItem['values'] ) . ')[[:>:]]"';
                         $joins[] = sprintf( $joinBaseString, 'NOT REGEXP', $regexp );
                         break;
+                    case 'regexp':
+                        $regexp =  '"' . implode( '|',$paramItem['values'] ) . '"';
+                        $joins[] = sprintf( $joinBaseString, 'REGEXP', $regexp );
+                        break;
                     default:
                         eZDebug::writeError( "Bad filter '".$paramItem['filter']."'.", 'extended_attribute_filter::enhancedselection' );
                 }
