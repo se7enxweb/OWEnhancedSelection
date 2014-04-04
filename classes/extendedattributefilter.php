@@ -63,5 +63,4 @@ class OWEnhancedSelectionExtendedAttributeFilter {
         $result['joins'] = implode( ' AND ', $joins ) . ' AND ';
         return $result;
     }
-
 }
