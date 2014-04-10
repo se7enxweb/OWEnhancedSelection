@@ -363,7 +363,7 @@ class OWEnhancedSelectionType extends eZDataType {
         if ( $http->hasPostVariable( $selectionName ) ) {
             $selection = $http->postVariable( $selectionName );
 
-            if ( count( $selection ) > 0 ) {
+            if ( count( $selection ) > 0 && $selection[0] != '') {
                 $classAttributeContent = $this->classAttributeContent( $objectAttribute->attribute( 'contentclass_attribute' ) );
                 $availableOptions = $classAttributeContent['available_options'];
                 foreach ( $availableOptions as $option ) {
