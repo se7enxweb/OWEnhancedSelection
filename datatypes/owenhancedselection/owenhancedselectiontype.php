@@ -351,6 +351,7 @@ class OWEnhancedSelectionType extends eZDataType {
     }
 
     function fetchCollectionAttributeHTTPInput( $collection, $collectionAttribute, $http, $base, $objectAttribute ) {
+
         $id = $objectAttribute->attribute( 'id' );
         $classContent = $objectAttribute->classContent();
         $nameArray = array();
@@ -367,15 +368,16 @@ class OWEnhancedSelectionType extends eZDataType {
                 $availableOptions = $classAttributeContent['available_options'];
                 foreach ( $availableOptions as $option ) {
                     $optionArray = (array) $option;
+
                     if ( in_array( $optionArray['identifier'], $selection ) ) {
-                        $nameArray[] = $option['name'];
+                        $nameArray[] = $option->name();
                     }
                     if ( $optionArray['type'] == OWEnhancedSelection::OPTGROUP_TYPE ) {
                         $subOptionList = $option instanceof OWEnhancedSelection ? $option->attribute( 'option_list' ) : $option['option_list'];
                         foreach ( $subOptionList as $subOption ) {
                             $subOptionArray = (array) $subOption;
                             if ( in_array( $subOptionArray['identifier'], $selection ) ) {
-                                $nameArray[] = $option['name'] . '/' . $subOption['name'];
+                                $nameArray[] = $optionArray['name'] . '/' . $subOption['name'];
                             }
                         }
                     }
