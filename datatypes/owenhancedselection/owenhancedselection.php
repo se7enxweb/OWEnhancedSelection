@@ -84,7 +84,7 @@ class OWEnhancedSelection extends eZPersistentObject {
                     'default' => false,
                     'required' => true )
             ),
-            'keys' => array( 'contentclassattribute_id', 'identifier' ),
+            'keys' => array( 'id' ),
             'increment_key' => 'id',
             'class_name' => 'OWEnhancedSelection',
             'name' => 'owenhancedselection',
@@ -241,6 +241,11 @@ class OWEnhancedSelection extends eZPersistentObject {
         return $objectList;
     }
 
+    /**
+     * Returns the list of all options of a content class attribute
+     * @param interger $contentClassAttributeID
+     * @return array
+     */
     static function fetchAttributeOptionlist( $contentClassAttributeID ) {
         $objectList = self::fetchList( array(
                     'contentclassattribute_id' => $contentClassAttributeID,
@@ -252,6 +257,27 @@ class OWEnhancedSelection extends eZPersistentObject {
             }
         }
         return $objectList;
+    }
+
+    static function createOrUpdate( $row ) {
+        if ( array_key_exists( 'id', $row ) ) {
+            $cond = array( 'id' => $row['id'] );
+        } elseif ( array_key_exists( 'contentclassattribute_id', $row ) && array_key_exists( 'identifier', $row ) ) {
+            $cond = array(
+                'contentclassattribute_id' => $row['contentclassattribute_id'],
+                'identifier' => $row['identifier'],
+            );
+        }
+        $object = static::fetch( $cond );
+        if ( $object ) {
+            foreach ( $row as $attribute => $value ) {
+                $object->setAttribute( $attribute, $value );
+            }
+        } else {
+            $object = new self( $row );
+        }
+        $object->store();
+        return $object;
     }
 
     /**
@@ -269,15 +295,16 @@ class OWEnhancedSelection extends eZPersistentObject {
         }
         $this->setAttribute( 'serialized_name_list', $this->NameList->serializeNames() );
         parent::store( $store_childs, $fieldFilters );
-        if ( $this->attribute( 'id' ) == null ) {
-            $object = self::fetch( array(
-                        'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
-                        'identifier' => $this->attribute( 'identifier' )
-                    ) );
-            if ( $object ) {
-                $this->setAttribute( 'id', $object->attribute( 'id' ) );
-            }
-        }
+        /*
+          if ( $this->attribute( 'id' ) == null ) {
+          $object = self::fetch( array(
+          'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
+          'identifier' => $this->attribute( 'identifier' )
+          ) );
+          if ( $object ) {
+          $this->setAttribute( 'id', $object->attribute( 'id' ) );
+          }
+          } */
     }
 
     /**

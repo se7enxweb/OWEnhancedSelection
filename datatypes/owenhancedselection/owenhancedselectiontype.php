@@ -48,11 +48,22 @@ class OWEnhancedSelectionType extends eZDataType {
 
     function validateClassAttributeHTTPInput( $http, $base, $classAttribute ) {
         $id = $classAttribute->attribute( 'id' );
-        $queryName = join( '_', array( $base, 'owenhancedselection_query', $id ) );
 
+        $identifiersName = join( '_', array( $base, 'owenhancedselection_identifier', $id ) );
+        if ( $http->hasPostVariable( $identifiersName ) ) {
+            $identifiers = $http->postVariable( $identifiersName );
+            var_dump( $identifiers );
+            foreach ( $identifiers as $identifier ) {
+                if ( empty( $identifier ) ) {
+                    return eZInputValidator::STATE_INVALID;
+                }
+            }
+        }
+
+        $queryName = join( '_', array( $base, 'owenhancedselection_query', $id ) );
         if ( $http->hasPostvariable( $queryName ) ) {
             $query = trim( $http->postVariable( $queryName ) );
-
+            var_dump( $query );
             if ( !empty( $query ) ) {
                 if ( $this->isDbQueryValid( $query ) !== true ) {
                     return eZInputValidator::STATE_INVALID;
@@ -181,19 +192,21 @@ class OWEnhancedSelectionType extends eZDataType {
 
         $actionlist = explode( "_", $action );
         $processAction = $actionlist[0];
+
         switch ( $processAction ) {
             case 'new-option-group':
                 $row = array(
+                    'id' => null,
                     'contentclassattribute_id' => $classAttribute->attribute( 'id' ),
                     'name' => '',
                     'identifier' => '',
                     'type' => OWEnhancedSelection::OPTGROUP_TYPE
                 );
-                $option = new OWEnhancedSelection( $row );
-                $option->store();
+                $option = OWEnhancedSelection::createOrUpdate( $row );
                 break;
             case 'new-option':
                 $row = array(
+                    'id' => null,
                     'contentclassattribute_id' => $classAttribute->attribute( 'id' ),
                     'name' => '',
                     'identifier' => '',
@@ -202,8 +215,7 @@ class OWEnhancedSelectionType extends eZDataType {
                 if ( isset( $actionlist[1] ) ) {
                     $row['optgroup_id'] = $actionlist[1];
                 }
-                $option = new OWEnhancedSelection( $row );
-                $option->store();
+                $option = OWEnhancedSelection::createOrUpdate( $row );
                 break;
 
             case 'remove-selected-option':
@@ -363,7 +375,7 @@ class OWEnhancedSelectionType extends eZDataType {
         if ( $http->hasPostVariable( $selectionName ) ) {
             $selection = $http->postVariable( $selectionName );
 
-            if ( count( $selection ) > 0 && $selection[0] != '') {
+            if ( count( $selection ) > 0 && $selection[0] != '' ) {
                 $classAttributeContent = $this->classAttributeContent( $objectAttribute->attribute( 'contentclass_attribute' ) );
                 $availableOptions = $classAttributeContent['available_options'];
                 foreach ( $availableOptions as $option ) {
@@ -448,24 +460,18 @@ class OWEnhancedSelectionType extends eZDataType {
         $classContent = $contentObjectAttribute->classContent();
         $titleArray = array();
         $titleString = "";
-
-        if ( count( $content ) > 0 ) {
-            $options = $classContent['options'];
-
-            if ( isset( $classContent['db_options'] ) and count( $classContent['db_options'] ) > 0 ) {
-                unset( $options );
-                $options = $classContent['db_options'];
-            }
-
+        if ( count( $content['options'] ) > 0 ) {
+            $options = $content['options'];
             foreach ( $options as $option ) {
-                if ( in_array( $option['identifier'], $content ) ) {
+                if ( is_object( $option ) ) {
+                    $titleArray[] = $option->attribute( 'name' );
+                } else {
                     $titleArray[] = $option['name'];
                 }
             }
 
             unset( $options );
         }
-
         if ( count( $titleArray ) > 0 ) {
             $delimiter = $classContent['delimiter'];
 
@@ -525,9 +531,11 @@ class OWEnhancedSelectionType extends eZDataType {
 
     function isDbQueryValid( $sql ) {
         $db = eZDB::instance();
-        eZDB::setErrorHandling( eZDB::ERROR_HANDLING_EXCEPTIONS );
+        if ( is_callable( 'eZDB::setErrorHandling' ) ) {
+            eZDB::setErrorHandling( eZDB::ERROR_HANDLING_EXCEPTIONS );
+        }
         try {
-            $res = $db->arrayQuery( $sql, array( 'limit' => 1 ) );
+            $db->arrayQuery( $sql );
             if ( $db->ErrorNumber == 0 ) {
                 return true;
             }
@@ -547,7 +555,7 @@ class OWEnhancedSelectionType extends eZDataType {
             $db = eZDB::instance();
             $res = $db->arrayQuery( $classContent['query'] );
             $firstRes = current( $res );
-            if ( isset( $firstRes['g_identifier'] ) && isset( $firstRes['g_name'] ) ) {
+            if ( array_key_exists( 'g_identifier', $firstRes ) && array_key_exists( 'g_name', $firstRes ) ) {
                 $newRes = array();
                 foreach ( $res as $res_item ) {
                     if ( $res_item['g_identifier'] ) {
@@ -595,9 +603,7 @@ class OWEnhancedSelectionType extends eZDataType {
 
         $isRequired = $contentObjectAttribute->validateIsRequired();
 
-        $selectionName = join( '_', array( $base, 'owenhancedselection_selection',
-            $id ) );
-
+        $selectionName = join( '_', array( $base, 'owenhancedselection_selection', $id ) );
         if ( $http->hasPostVariable( $selectionName ) ) {
             $selection = $http->postVariable( $selectionName );
 
@@ -605,8 +611,7 @@ class OWEnhancedSelectionType extends eZDataType {
                 switch ( true ) {
                     case $isRequired === true and count( $selection ) == 0:
                     case $isRequired === true and count( $selection ) == 1 and empty( $selection[0] ): {
-                            $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes', 'This is a required field.' )
-                            );
+                            $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes', 'This is a required field.' ) );
                             return eZInputValidator::STATE_INVALID;
                         } break;
                 }
