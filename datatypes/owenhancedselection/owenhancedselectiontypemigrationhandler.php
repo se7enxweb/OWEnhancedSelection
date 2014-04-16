@@ -56,8 +56,8 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
                     $value['type'] = OWEnhancedSelection::OPTGROUP_TYPE;
                     unset( $value['option_list'] );
                 }
-                $selectOption = new OWEnhancedSelection( $value );
-                $selectOption->setAttribute( 'contentclassattribute_id', $attribute->attribute( 'id' ) );
+                $value['contentclassattribute_id'] = $attribute->attribute( 'id' );
+                $selectOption = OWEnhancedSelection::createOrUpdate( $value );
                 if ( is_string( $value['name'] ) ) {
                     $selectOption->setName( $value['name'] );
                 } elseif ( is_array( $value['name'] ) ) {
@@ -67,7 +67,8 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
                 }
                 $selectOption->store();
                 foreach ( $selectSubOptionValueList as $selectSubOptionValue ) {
-                    $selectSubOption = new OWEnhancedSelection( $selectSubOptionValue );
+                    $selectSubOptionValue['contentclassattribute_id'] = $attribute->attribute( 'id' );
+                    $selectSubOption = OWEnhancedSelection::createOrUpdate( $selectSubOptionValue );
                     $selectSubOption->setAttribute( 'optgroup_id', $selectOption->attribute( 'id' ) );
                     $selectSubOption->setAttribute( 'contentclassattribute_id', $attribute->attribute( 'id' ) );
                     if ( is_string( $selectSubOptionValue['name'] ) ) {
