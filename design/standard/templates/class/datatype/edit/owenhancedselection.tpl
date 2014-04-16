@@ -6,7 +6,7 @@
 	 $down_image = "button-move_down-disabled.gif"
      $row_count = 0
      $bg_colors = array('bglight', 'bgdark')}
-     
+
 <div class="block">   
     <fieldset>
         <legend>{"Option list"|i18n('design/standard/class/datatype')}</legend>
@@ -16,7 +16,7 @@
                 <tr>
                     <th style="width: 1%;" colspan="4">&nbsp;</th>
                     <th>{"Name"|i18n('design/standard/class/datatype')}</th>
-                    <th>{"Identifier"|i18n('design/standard/class/datatype')}</th>
+                    <th>{"Identifier"|i18n('design/standard/class/datatype')} *</th>
                     <th style="width: 1%;">&nbsp;</th>
                 </tr>
                 {foreach $content.options as $option_index => $option_item}
@@ -163,6 +163,12 @@
 
 <div class="block">
     <label>{"Database query"|i18n('design/standard/class/datatype')}:</label>
+    <p>{"To create a simple option list"|i18n('design/standard/class/datatype')}:</p>
+    <pre>SELECT field1 AS identifier, field2 AS name
+FROM table1</pre>
+    <p>{"To create an option list with group"|i18n('design/standard/class/datatype')}:</p>
+    <pre>SELECT field1 AS g_identifier, field2 AS g_name, field3 AS identifier, field4 AS name
+FROM table1</pre>
     <textarea rows="5"
               cols="80"
               class="box"

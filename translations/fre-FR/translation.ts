@@ -63,61 +63,13 @@
 			<source>Move down</source>
 			<translation>Descendre</translation>
 		</message>
-		<!--message>
-			<source>Option list</source>
-			<translation>Liste des options</translation>
+		<message>
+			<source>To create a simple option list</source>
+			<translation>Pour créer une liste simple</translation>
 		</message>
 		<message>
-			<source>Name</source>
-			<translation>Nom</translation>
+			<source>To create an option list with group</source>
+			<translation>Pour créer une liste avec des groupes</translation>
 		</message>
-		<message>
-			<source>Identifier</source>
-			<translation>Identifiant</translation>
-		</message>
-		<message>
-			<source>Priority</source>
-			<translation>Priorité</translation>
-		</message>
-		<message>
-			<source>Move up</source>
-			<translation>Monter</translation>
-		</message>
-		<message>
-			<source>Move down</source>
-			<translation>Descendre</translation>
-		</message>
-		<message>
-			<source>New option</source>
-			<translation>Nouvelle option</translation>
-		</message>
-		<message>
-			<source>Remove selected option(s)</source>
-			<translation>Supprimer la sélection</translation>
-		</message>
-		<message>
-			<source>Sort options</source>
-			<translation>Tri</translation>
-		</message>
-		<message>
-			<source>A-Z</source>
-			<translation>A-Z</translation>
-		</message>
-		<message>
-			<source>Z-A</source>
-			<translation>Z-A</translation>
-		</message>
-		<message>
-			<source>Multiple choice</source>
-			<translation>Sélection multiple</translation>
-		</message>
-		<message>
-			<source>Delimiter</source>
-			<translation>Délimiteur</translation>
-		</message>
-		<message>
-			<source>Database query</source>
-			<translation>Requête en base de données</translation>
-		</message-->
 	</context>
 </TS>
