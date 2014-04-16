@@ -52,7 +52,6 @@ class OWEnhancedSelectionType extends eZDataType {
         $identifiersName = join( '_', array( $base, 'owenhancedselection_identifier', $id ) );
         if ( $http->hasPostVariable( $identifiersName ) ) {
             $identifiers = $http->postVariable( $identifiersName );
-            var_dump( $identifiers );
             foreach ( $identifiers as $identifier ) {
                 if ( empty( $identifier ) ) {
                     return eZInputValidator::STATE_INVALID;
@@ -63,7 +62,6 @@ class OWEnhancedSelectionType extends eZDataType {
         $queryName = join( '_', array( $base, 'owenhancedselection_query', $id ) );
         if ( $http->hasPostvariable( $queryName ) ) {
             $query = trim( $http->postVariable( $queryName ) );
-            var_dump( $query );
             if ( !empty( $query ) ) {
                 if ( $this->isDbQueryValid( $query ) !== true ) {
                     return eZInputValidator::STATE_INVALID;
