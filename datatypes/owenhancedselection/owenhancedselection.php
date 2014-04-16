@@ -242,6 +242,19 @@ class OWEnhancedSelection extends eZPersistentObject {
     }
 
     /**
+     * Max value of field with custom conditions
+     *
+     * @param string $field
+     * @param array $conds
+     * @return interger
+     */
+    static function max( $field, $conds = array() ) {
+        $customFields = array( array( 'operation' => 'MAX( ' . $field . ' )', 'name' => 'max' ) );
+        $rows = eZPersistentObject::fetchObjectList( self::definition(), array(), $conds, array(), null, false, false, $customFields );
+        return $rows[0]['max'];
+    }
+
+    /**
      * Returns the list of all options of a content class attribute
      * @param interger $contentClassAttributeID
      * @return array
@@ -294,17 +307,15 @@ class OWEnhancedSelection extends eZPersistentObject {
             $this->setAttribute( 'type', self::OPTION_TYPE );
         }
         $this->setAttribute( 'serialized_name_list', $this->NameList->serializeNames() );
+        if ( $this->attribute( 'priority' ) == 0 ) {
+            $lastPriority = static::max( 'priority', array(
+                        'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
+                        'optgroup_id' => $this->attribute( 'optgroup_id' )
+                    ) );
+            $lastPriority += $this->attribute( 'optgroup_id' ) == 0 ? 10 : 1;
+            $this->setAttribute( 'priority', $lastPriority );
+        }
         parent::store( $store_childs, $fieldFilters );
-        /*
-          if ( $this->attribute( 'id' ) == null ) {
-          $object = self::fetch( array(
-          'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
-          'identifier' => $this->attribute( 'identifier' )
-          ) );
-          if ( $object ) {
-          $this->setAttribute( 'id', $object->attribute( 'id' ) );
-          }
-          } */
     }
 
     /**
