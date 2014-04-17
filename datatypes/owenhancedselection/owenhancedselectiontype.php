@@ -553,7 +553,7 @@ class OWEnhancedSelectionType extends eZDataType {
             $db = eZDB::instance();
             $res = $db->arrayQuery( $classContent['query'] );
             $firstRes = current( $res );
-            if ( array_key_exists( 'g_identifier', $firstRes ) && array_key_exists( 'g_name', $firstRes ) ) {
+            if ( is_array( $firstRes ) && array_key_exists( 'g_identifier', $firstRes ) && array_key_exists( 'g_name', $firstRes ) ) {
                 $newRes = array();
                 foreach ( $res as $res_item ) {
                     if ( $res_item['g_identifier'] ) {
