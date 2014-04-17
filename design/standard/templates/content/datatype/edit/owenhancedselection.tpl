@@ -2,7 +2,7 @@
       $class_content=$attribute.class_content}
 
 <select name="ContentObjectAttribute_owenhancedselection_selection_{$attribute.id}[]"
-        {if $class_content.is_multiselect}multiple="multiple"{/if}>
+        {if $class_content.is_multiselect}multiple="multiple" width="100%" height="300px"{/if}>
 
     {foreach $class_content.available_options as $option}
         {if $option.type|eq('optgroup')}
