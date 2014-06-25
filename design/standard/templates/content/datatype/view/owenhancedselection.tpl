@@ -5,5 +5,4 @@
     {delimiter}{cond( $class_content.delimiter|ne(""), $class_content.delimiter, ezini('Delimiter', 'Default', 'owenhancedselection.ini'))}{/delimiter}
     {if $option.optgroup}{$option.optgroup.name|wash}/{/if}{$option.name|wash}
 {/foreach}
-
-{/undef}
+{undef}

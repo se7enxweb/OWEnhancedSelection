@@ -9,4 +9,4 @@
 *}{/foreach}{*
 *}{/set-block}
 {pdf(text, $pdf_text|wash(pdf))}
-{/undef}
+{undef}
