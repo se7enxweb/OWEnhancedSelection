@@ -419,8 +419,7 @@ class OWEnhancedSelectionType extends eZDataType {
     function metaData( $contentObjectAttribute ) {
         $content = $contentObjectAttribute->content();
         $classContent = $contentObjectAttribute->classContent();
-
-        if ( count( $content ) > 0 ) {
+        if ( isset( $content['identifiers'] ) ) {
             $metaDataArray = array();
             $options = $classContent['options'];
 
@@ -437,10 +436,8 @@ class OWEnhancedSelectionType extends eZDataType {
                     $identifier = $option['identifier'];
                     $name = $option['name'];
                 }
-                if ( in_array( $identifier, $content ) ) {
-                    $metaDataArray[] = array( 'id' => '',
-                        'text' => $identifier );
-                    $metaDataArray[] = array( 'id' => '',
+                if ( in_array( $identifier, $content['identifiers'] ) ) {
+                    $metaDataArray[] = array( 'id' => $identifier,
                         'text' => $name );
                 }
             }
