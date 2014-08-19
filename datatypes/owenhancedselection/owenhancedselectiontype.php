@@ -319,6 +319,8 @@ class OWEnhancedSelectionType extends eZDataType {
             'options' => $optionList,
             'identifiers' => $identifierList
         );
+        $classContent = $contentObjectAttribute->classContent();
+        $content['to_string'] = $this->_title( $content, $classContent );
         return $content;
     }
 
@@ -453,6 +455,10 @@ class OWEnhancedSelectionType extends eZDataType {
     function title( $contentObjectAttribute, $name = null ) {
         $content = $contentObjectAttribute->content();
         $classContent = $contentObjectAttribute->classContent();
+        return $this->_title( $content, $classContent );
+    }
+
+    protected function _title( $content, $classContent ) {
         $titleArray = array();
         $titleString = "";
         if ( count( $content['options'] ) > 0 ) {
