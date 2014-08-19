@@ -11,7 +11,7 @@ extended_attribute_filter exemple :
                 hash( 
                     'attribute', 'my_class/my_attribute',
                     'filter', '=',
-                    'values', 'my_value,
+                    'values', 'my_value',
                 )
             )
         ) 
