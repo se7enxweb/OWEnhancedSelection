@@ -17,7 +17,7 @@
 
 
 /* !
-  \class   OWEnhancedSelection owenhancedselection.php
+  \class   OWEnhancedSelectionBasicOption owenhancedselection.php
   \ingroup eZDatatype
   \brief   Handles the persistent object for the datatype owenhancedselection.
   \version 3.0
@@ -25,7 +25,7 @@
   \author  Madeline Veyrenc
  */
 
-class OWEnhancedSelection extends eZPersistentObject {
+class OWEnhancedSelectionBasicOption extends eZPersistentObject {
 
     const
             OPTION_TYPE = 'option',
@@ -86,7 +86,7 @@ class OWEnhancedSelection extends eZPersistentObject {
             ),
             'keys' => array( 'id' ),
             'increment_key' => 'id',
-            'class_name' => 'OWEnhancedSelection',
+            'class_name' => 'OWEnhancedSelectionBasicOption',
             'name' => 'owenhancedselection',
             'function_attributes' => array(
                 'is_optgroup' => 'isOptgroup',
@@ -126,7 +126,7 @@ class OWEnhancedSelection extends eZPersistentObject {
     /**
      * Return the option group related to the object if exists
      * 
-     * @return OWEnhancedSelection|null
+     * @return OWEnhancedSelectionBasicOption|null
      */
     protected function optgroup() {
         return self::fetch( array( 'id' => $this->attribute( 'optgroup_id' ) ) );
