@@ -35,7 +35,7 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
                         );
                         $optionArray['option_list'][] = $subOptionArray;
                     }
-                } elseif ( $option->attribute( 'type' ) == OWEnhancedSelection::OPTGROUP_TYPE ) {
+                } elseif ( $option->attribute( 'type' ) == OWEnhancedSelectionBasicOption::OPTGROUP_TYPE ) {
                     $optionArray['type'] = $option->attribute( 'type' );
                 }
                 $optionList[] = $optionArray;
@@ -53,11 +53,11 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
                 $selectSubOptionValueList = array();
                 if ( array_key_exists( 'option_list', $value ) ) {
                     $selectSubOptionValueList = $value['option_list'];
-                    $value['type'] = OWEnhancedSelection::OPTGROUP_TYPE;
+                    $value['type'] = OWEnhancedSelectionBasicOption::OPTGROUP_TYPE;
                     unset( $value['option_list'] );
                 }
                 $value['contentclassattribute_id'] = $attribute->attribute( 'id' );
-                $selectOption = OWEnhancedSelection::createOrUpdate( $value );
+                $selectOption = OWEnhancedSelectionBasicOption::createOrUpdate( $value );
                 if ( is_string( $value['name'] ) ) {
                     $selectOption->setName( $value['name'] );
                 } elseif ( is_array( $value['name'] ) ) {
@@ -68,7 +68,7 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
                 $selectOption->store();
                 foreach ( $selectSubOptionValueList as $selectSubOptionValue ) {
                     $selectSubOptionValue['contentclassattribute_id'] = $attribute->attribute( 'id' );
-                    $selectSubOption = OWEnhancedSelection::createOrUpdate( $selectSubOptionValue );
+                    $selectSubOption = OWEnhancedSelectionBasicOption::createOrUpdate( $selectSubOptionValue );
                     $selectSubOption->setAttribute( 'optgroup_id', $selectOption->attribute( 'id' ) );
                     $selectSubOption->setAttribute( 'contentclassattribute_id', $attribute->attribute( 'id' ) );
                     if ( is_string( $selectSubOptionValue['name'] ) ) {
