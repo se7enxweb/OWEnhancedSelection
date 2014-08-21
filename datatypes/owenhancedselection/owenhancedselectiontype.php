@@ -430,7 +430,7 @@ class OWEnhancedSelectionType extends eZDataType {
         if ( count( $content['options'] ) > 0 ) {
             $options = $content['options'];
             foreach ( $options as $option ) {
-                $titleArray[] = ($option->attribute( 'optgroup' ) ? $option->attribute( 'optgroup' )->attribute( 'name' ) : "" ) . '/' . $option->attribute( 'name' );
+                $titleArray[] = ($option->attribute( 'optgroup' ) ? $option->attribute( 'optgroup' )->attribute( 'name' ) . '/' : "" ) . $option->attribute( 'name' );
             }
             unset( $options );
         }
