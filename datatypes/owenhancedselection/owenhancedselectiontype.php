@@ -513,29 +513,26 @@ class OWEnhancedSelectionType extends eZDataType {
             $this->isDbQueryValid( $classContent['query'] ) === true ) {
             $db = eZDB::instance();
             $res = $db->arrayQuery( $classContent['query'] );
-            $firstRes = current( $res );
-            if ( is_array( $firstRes ) && array_key_exists( 'g_identifier', $firstRes ) && array_key_exists( 'g_name', $firstRes ) ) {
-                foreach ( $res as $res_item ) {
-                    $option = new OWEnhancedSelectionDBOption();
-                    $option->setAttribute( 'name', $res_item['name'] );
-                    $option->setAttribute( 'identifier', $res_item['identifier'] );
-                    $option->setAttribute( 'type', OWEnhancedSelectionBasicOption::OPTGROUP_TYPE );
-                    if ( $res_item['g_identifier'] ) {
-                        if ( !isset( $optionList[$res_item['g_identifier']] ) ) {
-                            $parentOption = new OWEnhancedSelectionDBOption();
-                            $parentOption->setAttribute( 'name', $res_item['g_name'] );
-                            $parentOption->setAttribute( 'identifier', $res_item['g_identifier'] );
-                            $parentOption->setAttribute( 'type', OWEnhancedSelectionDBOption::OPTGROUP_TYPE );
-                            $optionList[$res_item['g_identifier']] = $parentOption;
-                        }
-                        $parentOption = $optionList[$res_item['g_identifier']];
-                        $parentSubOptionList = $parentOption->attribute( 'option_list' );
-                        $option->setAttribute( 'optgroup', $parentOption );
-                        $parentSubOptionList[] = $option;
-                        $parentOption->setAttribute( 'option_list', $parentSubOptionList );
-                    } else {
-                        $optionList[] = $option;
+            foreach ( $res as $res_item ) {
+                $option = new OWEnhancedSelectionDBOption();
+                $option->setAttribute( 'name', $res_item['name'] );
+                $option->setAttribute( 'identifier', $res_item['identifier'] );
+                $option->setAttribute( 'type', OWEnhancedSelectionBasicOption::OPTION_TYPE );
+                if ( array_key_exists( 'g_identifier', $res_item ) ) {
+                    if ( !isset( $optionList[$res_item['g_identifier']] ) ) {
+                        $parentOption = new OWEnhancedSelectionDBOption();
+                        $parentOption->setAttribute( 'name', $res_item['g_name'] );
+                        $parentOption->setAttribute( 'identifier', $res_item['g_identifier'] );
+                        $parentOption->setAttribute( 'type', OWEnhancedSelectionDBOption::OPTGROUP_TYPE );
+                        $optionList[$res_item['g_identifier']] = $parentOption;
                     }
+                    $parentOption = $optionList[$res_item['g_identifier']];
+                    $parentSubOptionList = $parentOption->attribute( 'option_list' );
+                    $option->setAttribute( 'optgroup', $parentOption );
+                    $parentSubOptionList[] = $option;
+                    $parentOption->setAttribute( 'option_list', $parentSubOptionList );
+                } else {
+                    $optionList[] = $option;
                 }
             }
         }
