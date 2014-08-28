@@ -14,10 +14,8 @@ class OWEnhancedSelectionExtendedAttributeFilter {
      */
 
     static function createSqlParts( $params ) {
-        $result = array(
-            'tables' => 'INNER JOIN ezcontentobject_attribute ON ( ezcontentobject.id = ezcontentobject_attribute.contentobject_id )',
-            'joins' => '' );
-        $joins = array();
+        $tablesList = array();
+        $joinsList = array();
         foreach ( $params as $paramItem ) {
             if ( array_key_exists( 'attribute', $paramItem ) && array_key_exists( 'values', $paramItem ) ) {
                 if ( !array_key_exists( 'filter', $paramItem ) ) {
@@ -31,36 +29,41 @@ class OWEnhancedSelectionExtendedAttributeFilter {
                 if ( !is_array( $paramItem['values'] ) ) {
                     $paramItem['values'] = array( $paramItem['values'] );
                 }
-                $joinBaseString = "( ezcontentobject_attribute.contentclassattribute_id = " . $paramItem['attribute'] . " AND ezcontentobject_attribute.sort_key_string %s %s )";
+                $tablesList[] = 'INNER JOIN ezcontentobject_attribute AS ezcontentobject_attribute_' . $paramItem['attribute'] . ' ON ( ezcontentobject.id = ezcontentobject_attribute_' . $paramItem['attribute'] . '.contentobject_id AND ezcontentobject_attribute_' . $paramItem['attribute'] . '.contentclassattribute_id = ' . $paramItem['attribute'] . ' )';
+                $joinBaseString = "( ezcontentobject_attribute_" . $paramItem['attribute'] . ".sort_key_string %s %s )";
                 switch ( $paramItem['filter'] ) {
                     case '=':
                         $regexp = '"^((' . implode( '|', $paramItem['values'] ) . '){1}[[. .]]?)+$"';
-                        $joins[] = sprintf( $joinBaseString, 'REGEXP', $regexp );
+                        $joinsList[] = sprintf( $joinBaseString, 'REGEXP', $regexp );
                         break;
                     case '!=':
                         $regexp = '"^((' . implode( '|', $paramItem['values'] ) . '){1}[[. .]]?)+$"';
-                        $joins[] = sprintf( $joinBaseString, 'NOT REGEXP', $regexp );
+                        $joinsList[] = sprintf( $joinBaseString, 'NOT REGEXP', $regexp );
                         break;
                     case 'in':
                         $regexp = '"[[:<:]](' . implode( '|', $paramItem['values'] ) . ')[[:>:]]"';
-                        $joins[] = sprintf( $joinBaseString, 'REGEXP', $regexp );
+                        $joinsList[] = sprintf( $joinBaseString, 'REGEXP', $regexp );
                         break;
                     case 'not in':
                         $regexp = '"[[:<:]](' . implode( '|', $paramItem['values'] ) . ')[[:>:]]"';
-                        $joins[] = sprintf( $joinBaseString, 'NOT REGEXP', $regexp );
+                        $joinsList[] = sprintf( $joinBaseString, 'NOT REGEXP', $regexp );
                         break;
                     case 'regexp':
-                        $regexp =  '"' . implode( '|',$paramItem['values'] ) . '"';
-                        $joins[] = sprintf( $joinBaseString, 'REGEXP', $regexp );
+                        $regexp = '"' . implode( '|', $paramItem['values'] ) . '"';
+                        $joinsList[] = sprintf( $joinBaseString, 'REGEXP', $regexp );
                         break;
                     default:
-                        eZDebug::writeError( "Bad filter '".$paramItem['filter']."'.", 'extended_attribute_filter::enhancedselection' );
+                        eZDebug::writeError( "Bad filter '" . $paramItem['filter'] . "'.", 'extended_attribute_filter::enhancedselection' );
                 }
             } else {
                 eZDebug::writeError( "Missing 'attribute' or 'values' in params.", 'extended_attribute_filter::enhancedselection' );
             }
         }
-        $result['joins'] = implode( ' AND ', $joins ) . ' AND ';
+        $result = array(
+            'tables' => implode( ' ', $tablesList ),
+            'joins' => implode( ' AND ', $joinsList ) . ' AND '
+        );
         return $result;
     }
+
 }
