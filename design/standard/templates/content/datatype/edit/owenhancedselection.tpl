@@ -3,7 +3,7 @@
 
 <select name="ContentObjectAttribute_owenhancedselection_selection_{$attribute.id}[]"
         {if $class_content.is_multiselect}multiple="multiple" style="width: 100%; height: 300px;"{/if}>
-    {if $attribute.is_required|not() }
+    {if $attribute.is_required|not()}
         <option value=""></option>
     {/if}
     {foreach $class_content.available_options as $option}
