@@ -5,7 +5,9 @@
 
 <select name="ContentObjectAttribute_owenhancedselection_selection_{$attribute.id}[]"
         {if $class_content.is_multiselect}multiple="multiple"{/if} {if is_set($html_class)}class="{$html_class}"{/if} {if is_set($html_id)}id="{$html_id}"{/if}>
-
+    {if $attribute.is_required|not() }
+        <option value=""></option>
+    {/if}
     {foreach $class_content.available_options as $option}
         {if $option.type|eq('optgroup')}
             <optgroup label="{$option.name|wash}">
