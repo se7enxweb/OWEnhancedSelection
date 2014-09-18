@@ -91,6 +91,7 @@ Indexing
 ========
 
 You have 3 filters for Solr queries :
+
 * my_class/my_attribute/optgroup_identifier : list of the identifiers of option groups of selected options
 * my_class/my_attribute/optgroup_name : list of the names of option groups of selected options
 * my_class/my_attribute/identifier : list of the identifiers of selected options
