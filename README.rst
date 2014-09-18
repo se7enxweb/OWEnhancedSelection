@@ -2,7 +2,7 @@
 OWEnhancedSelection for eZ Publish documentation
 ================================================
 
-.. image:: https://github.com/lolautruche/SQLIImport/raw/master/doc/images/Open-Wide_logo.png
+.. image:: https://github.com/Open-Wide/OWEnhancedSelection/raw/master/doc/images/Open-Wide_logo.png
     :align: center
 
 :Extension: OW Enhanced Selection v1.0
@@ -59,7 +59,7 @@ Usage
 
 Add an owenhancedselection attribute in your content class. Configure the content of the selection by using option list part or query part :
 
-.. image:: https://github.com/lolautruche/SQLIImport/raw/master/doc/images/owenhancedselection.png
+.. image:: https://github.com/Open-Wide/OWEnhancedSelection/raw/master/doc/images/owenhancedselection.png
     :align: center
 
 Attribute filter
