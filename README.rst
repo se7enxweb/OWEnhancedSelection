@@ -24,35 +24,35 @@ Installation
 
 .. code-block:: sh
 
-$ git clone https://github.com/Open-Wide/OWEnhancedSelection.git extension/owenhancedselection
+    $ git clone https://github.com/Open-Wide/OWEnhancedSelection.git extension/owenhancedselection
 
 2. Enable the extension in the site.ini.append.php :
 
 .. code-block:: php
 
-ActiveExtensions[]=owenhancedselection
+    ActiveExtensions[]=owenhancedselection
 
 3. Update the autoload arrays and clear cache :
 
 .. code-block:: sh
 
-$ bin/php/ezpgenerateautoloads.php --extension
-$ bin/php/ezcache.php --clear-all
+    $ bin/php/ezpgenerateautoloads.php --extension
+    $ bin/php/ezcache.php --clear-all
 
 4. Create the following table in your database :
 
 .. code-block:: sql
 
-CREATE TABLE owenhancedselection (
-  id int(11) NOT NULL AUTO_INCREMENT,
-  contentclassattribute_id int(11) NOT NULL,
-  type varchar(8) DEFAULT NULL,
-  optgroup_id int(11) DEFAULT NULL,
-  serialized_name_list longtext,
-  identifier varchar(200) DEFAULT NULL,
-  priority int(11) DEFAULT NULL,
-  PRIMARY KEY (id)
-)
+    CREATE TABLE owenhancedselection (
+      id int(11) NOT NULL AUTO_INCREMENT,
+      contentclassattribute_id int(11) NOT NULL,
+      type varchar(8) DEFAULT NULL,
+      optgroup_id int(11) DEFAULT NULL,
+      serialized_name_list longtext,
+      identifier varchar(200) DEFAULT NULL,
+      priority int(11) DEFAULT NULL,
+      PRIMARY KEY (id)
+    )
 
 Usage
 =====
@@ -69,20 +69,20 @@ If you want to filter content based on selected values in owenhancedselection da
 
 .. code-block:: 
 
-{def $children_list = fetch( 'content', 'list', hash( 
-    'parent_node_id', $node.node_id,
-    'sort_by', $node.sort_array,
-    'extended_attribute_filter', hash(
-        'id', 'enhancedselection',
-        'params', array(
-            hash( 
-                'attribute', 'my_class/my_attribute',
-                'filter', '=',
-                'values', 'my_value',
+    {def $children_list = fetch( 'content', 'list', hash( 
+        'parent_node_id', $node.node_id,
+        'sort_by', $node.sort_array,
+        'extended_attribute_filter', hash(
+            'id', 'enhancedselection',
+            'params', array(
+                hash( 
+                    'attribute', 'my_class/my_attribute',
+                    'filter', '=',
+                    'values', 'my_value',
+                )
             )
-        )
-    ) 
-) )}
+        ) 
+    ) )}
 
 *filter* parameter can take these values : '=', '!=', 'in', 'not in' or regexp
 *value* can be a string or an array or string. Strings must represent an option identifier.
