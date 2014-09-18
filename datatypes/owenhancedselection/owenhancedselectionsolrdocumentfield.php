@@ -31,12 +31,27 @@ class OWEnhancedSelectionSolrDocumentField extends ezfSolrDocumentFieldBase {
 
                     $fieldName = parent::generateAttributeFieldName( $contentClassAttribute, self::DEFAULT_ATTRIBUTE_TYPE );
                     $returnArray[$fieldName] = $this->ContentObjectAttribute->title();
+                    $fieldOptgroupIdentifiersName = parent::generateSubattributeFieldName( $contentClassAttribute, 'optgroup_identifier', self::DEFAULT_SUBATTRIBUTE_TYPE );
+                    $fieldOptgroupNamesName = parent::generateSubattributeFieldName( $contentClassAttribute, 'optgroup_name', self::DEFAULT_SUBATTRIBUTE_TYPE );
                     $fieldIdentifiersName = parent::generateSubattributeFieldName( $contentClassAttribute, 'identifier', self::DEFAULT_SUBATTRIBUTE_TYPE );
                     $fieldNamesName = parent::generateSubattributeFieldName( $contentClassAttribute, 'name', self::DEFAULT_SUBATTRIBUTE_TYPE );
+                    $optgroupList = array();
+                    $optgroupNameList = array();
+                    $optionList = array();
+                    $optionNameList = array();
                     foreach ( $value as $item ) {
-                        $returnArray[$fieldIdentifiersName][] = $item['id'];
-                        $returnArray[$fieldNamesName][] = $item['text'];
+                        if ( isset( $item['optgroup'] ) ) {
+                            $optgroupList[] = $item['optgroup'];
+                            $optgroupNameList[] = $item['optgroup_name'];
+                        } else {
+                            $optionList[] = $item['option'];
+                            $optionNameList[] = $item['option_name'];
+                        }
                     }
+                    $returnArray[$fieldOptgroupIdentifiersName] = array_unique( $optgroupList );
+                    $returnArray[$fieldOptgroupNamesName] = array_unique( $optgroupNameList );
+                    $returnArray[$fieldIdentifiersName] = array_unique( $optionList );
+                    $returnArray[$fieldNamesName] = array_unique( $optionNameList );
                     return $returnArray;
                 } break;
 

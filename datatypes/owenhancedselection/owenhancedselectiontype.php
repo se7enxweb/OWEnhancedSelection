@@ -406,13 +406,13 @@ class OWEnhancedSelectionType extends eZDataType {
         foreach ( $content['options'] as $option ) {
             if ( $option->attribute( 'optgroup' ) ) {
                 $metaDataArray[] = array(
-                    'id' => $option->attribute( 'optgroup' )->attribute( 'identifier' ),
-                    'text' => $option->attribute( 'optgroup' )->attribute( 'name' )
+                    'optgroup' => $option->attribute( 'optgroup' )->attribute( 'identifier' ),
+                    'optgroup_name' => $option->attribute( 'optgroup' )->attribute( 'name' )
                 );
             }
             $metaDataArray[] = array(
-                'id' => $option->attribute( 'identifier' ),
-                'text' => $option->attribute( 'name' )
+                'option' => $option->attribute( 'identifier' ),
+                'option_name' => $option->attribute( 'name' )
             );
         }
         return $metaDataArray;
