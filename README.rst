@@ -85,6 +85,7 @@ If you want to filter content based on selected values in owenhancedselection da
     ) )}
 
 *filter* parameter can take these values : '=', '!=', 'in', 'not in' or regexp
+
 *value* can be a string or an array or string. Strings must represent an option identifier.
 
 Indexing
