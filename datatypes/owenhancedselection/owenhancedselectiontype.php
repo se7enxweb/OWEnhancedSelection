@@ -130,12 +130,23 @@ class OWEnhancedSelectionType extends eZDataType {
                 'delimiter' => '',
                 'query' => '',
                 'db_options' => array(),
-                'available_options' => array()
+                'available_options' => array(),
+                'available_options_by_identifier' => array()
             );
         } else {
             $content['options'] = OWEnhancedSelectionBasicOption::fetchAttributeOptionlist( $classAttribute->attribute( 'id' ) );
             $content['db_options'] = $this->getDbOptions( $content );
             $content['available_options'] = empty( $content['db_options'] ) ? $content['options'] : $content['db_options'];
+            $optionsByidentifier = array();
+            foreach ( $content['available_options'] as $option ) {
+                $optionsByidentifier[$option->attribute( 'identifier' )] = $option;
+                if ( $option->attribute( 'has_option' ) ) {
+                    foreach ( $option->attribute( 'option_list' ) as $subOption ) {
+                        $optionsByidentifier[$subOption->attribute( 'identifier' )] = $subOption;
+                    }
+                }
+            }
+            $content['available_options_by_identifier'] = $optionsByidentifier;
         }
         return $content;
     }
@@ -294,24 +305,16 @@ class OWEnhancedSelectionType extends eZDataType {
             $identifierList = array();
         }
         $classAttributeContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
-        $availableOptions = $classAttributeContent['available_options'];
-        foreach ( $availableOptions as $option ) {
-            if ( $option->attribute( 'type' ) == OWEnhancedSelectionBasicOption::OPTGROUP_TYPE ) {
-                $subOptionList = $option->attribute( 'option_list' );
-                foreach ( $subOptionList as $subOption ) {
-                    if ( in_array( $subOption->attribute( 'identifier' ), $identifierList ) ) {
-                        $optionList[] = $subOption;
-                    }
-                }
-            } else {
-                if ( in_array( $option->attribute( 'identifier' ), $identifierList ) ) {
-                    $optionList[] = $option;
-                }
+        $availableOptions = $classAttributeContent['available_options_by_identifier'];
+        foreach ( $identifierList as $identifier ) {
+            if ( isset( $availableOptions[$identifier] ) ) {
+                $optionList[$identifier] = $availableOptions[$identifier];
             }
         }
         $content = array(
-            'options' => $optionList,
-            'identifiers' => $identifierList
+            'options' => array_values( $optionList ),
+            'options_by_identifier' => $optionList,
+            'identifiers' => array_keys( $optionList )
         );
         $classContent = $contentObjectAttribute->classContent();
         $content['to_string'] = $this->_title( $content, $classContent );
