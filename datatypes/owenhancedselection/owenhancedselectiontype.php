@@ -125,20 +125,20 @@ class OWEnhancedSelectionType extends eZDataType {
         $content = @unserialize( $classAttribute->attribute( self::CONTENT_CLASS_STORAGE ) );
         if ( empty( $content ) ) {
             $content = array(
-                'options' => array(),
+                'basic_options' => array(),
                 'is_multiselect' => 0,
                 'delimiter' => '',
                 'query' => '',
                 'db_options' => array(),
-                'available_options' => array(),
-                'available_options_by_identifier' => array()
+                'options' => array(),
+                'options_by_identifier' => array()
             );
         } else {
-            $content['options'] = OWEnhancedSelectionBasicOption::fetchAttributeOptionlist( $classAttribute->attribute( 'id' ) );
+            $content['basic_options'] = OWEnhancedSelectionBasicOption::fetchAttributeOptionlist( $classAttribute->attribute( 'id' ) );
             $content['db_options'] = $this->getDbOptions( $content );
-            $content['available_options'] = empty( $content['db_options'] ) ? $content['options'] : $content['db_options'];
+            $content['options'] = empty( $content['db_options'] ) ? $content['basic_options'] : $content['db_options'];
             $optionsByidentifier = array();
-            foreach ( $content['available_options'] as $option ) {
+            foreach ( $content['options'] as $option ) {
                 $optionsByidentifier[$option->attribute( 'identifier' )] = $option;
                 if ( $option->attribute( 'has_option' ) ) {
                     foreach ( $option->attribute( 'option_list' ) as $subOption ) {
@@ -146,7 +146,7 @@ class OWEnhancedSelectionType extends eZDataType {
                     }
                 }
             }
-            $content['available_options_by_identifier'] = $optionsByidentifier;
+            $content['options_by_identifier'] = $optionsByidentifier;
         }
         return $content;
     }
@@ -305,7 +305,7 @@ class OWEnhancedSelectionType extends eZDataType {
             $identifierList = array();
         }
         $classAttributeContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
-        $availableOptions = $classAttributeContent['available_options_by_identifier'];
+        $availableOptions = $classAttributeContent['options_by_identifier'];
         foreach ( $identifierList as $identifier ) {
             if ( isset( $availableOptions[$identifier] ) ) {
                 $optionList[$identifier] = $availableOptions[$identifier];
@@ -369,7 +369,7 @@ class OWEnhancedSelectionType extends eZDataType {
 
             if ( count( $selection ) > 0 && $selection[0] != '' ) {
                 $classAttributeContent = $this->classAttributeContent( $objectAttribute->attribute( 'contentclass_attribute' ) );
-                $availableOptions = $classAttributeContent['available_options'];
+                $availableOptions = $classAttributeContent['options'];
                 foreach ( $availableOptions as $option ) {
 
                     if ( in_array( $option->attribute( 'identifier' ), $selection ) ) {

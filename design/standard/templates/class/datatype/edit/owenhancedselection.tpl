@@ -11,7 +11,7 @@
     <fieldset>
         <legend>{"Option list"|i18n('design/standard/class/datatype')}</legend>
 
-        {if count($content.options)|gt(0)}
+        {if count($content.basic_options)|gt(0)}
             <table class="list" cellspacing="0">
                 <tr>
                     <th style="width: 1%;" colspan="4">&nbsp;</th>
@@ -19,7 +19,7 @@
                     <th>{"Identifier"|i18n('design/standard/class/datatype')} *</th>
                     <th style="width: 1%;">&nbsp;</th>
                 </tr>
-                {foreach $content.options as $option_index => $option_item}
+                {foreach $content.basic_options as $option_index => $option_item}
                     {set $row_count = $row_count|inc()}
                     <tr class="{$bg_colors[$row_count|mod(2)]}">
                         <td {if $option_item.type|eq('optgroup')}style="border-bottom: 1px solid black"{/if}>
@@ -47,19 +47,19 @@
                         <td>
                             <div style="white-space: nowrap;">
                                 {set $up_enabled=$option_index|ne(0)
-                                     $down_enabled=$option_index|lt(count($content.options)|dec())
+                                     $down_enabled=$option_index|lt(count($content.basic_options)|dec())
                                      $up_image=cond($up_enabled,"button-move_up.gif","button-move_up-disabled.gif")
                                      $down_image=cond($down_enabled,"button-move_down.gif","button-move_down-disabled.gif")}
                                 <input type="image"
                                        src={$up_image|ezimage}
-                                       {if $up_enabled}name="CustomActionButton[{$id}_move-up_{$option_item.id}_{$content.options[$option_index|dec()]['id']}]"{/if}
+                                       {if $up_enabled}name="CustomActionButton[{$id}_move-up_{$option_item.id}_{$content.basic_options[$option_index|dec()]['id']}]"{/if}
                                        value="{$option_item.id}"
                                        title="{'Move up'|i18n('design/standard/class/datatype')}"
                                        {if $up_enabled|not}disabled="disabled"{/if} />
 
                                 <input type="image"
                                        src={$down_image|ezimage}
-                                       {if $down_enabled}name="CustomActionButton[{$id}_move-down_{$option_item.id}_{$content.options[$option_index|inc()]['id']}]"{/if}
+                                       {if $down_enabled}name="CustomActionButton[{$id}_move-down_{$option_item.id}_{$content.basic_options[$option_index|inc()]['id']}]"{/if}
                                        value="{$option_item.id}"
                                        title="{'Move down'|i18n('design/standard/class/datatype')}"
                                        {if $down_enabled|not}disabled="disabled"{/if} />
@@ -136,7 +136,7 @@
                    value="{'New option'|i18n('design/standard/class/datatype')}"
                    name="CustomActionButton[{$id}_new-option]" />
             <input type="submit"
-                   {if count($content.options)|gt(0)}class="button btn"{else}class="btn" disabled="disabled"{/if}
+                   {if count($content.basic_options)|gt(0)}class="button btn"{else}class="btn" disabled="disabled"{/if}
                    value="{'Remove selected option(s)'|i18n('design/standard/class/datatype')}"
                    name="CustomActionButton[{$id}_remove-selected-option]" />
         </div>

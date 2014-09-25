@@ -1,6 +1,6 @@
 {def $class_content=$attribute.class_content}
 <select name="{$select_name}" {if $class_content.is_multiselect}multiple="multiple" style="width: 100%; height: 300px;"{/if}>
-    {foreach $class_content.available_options as $option}
+    {foreach $class_content.options as $option}
         {if $option.type|eq('optgroup')}
             <optgroup label="{$option.name|wash}">
                 {foreach $option.option_list as $sub_option}

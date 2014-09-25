@@ -4,7 +4,7 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
 
     static public function toArray( eZContentClassAttribute $attribute ) {
         $content = $attribute->content();
-        unset( $content['available_options'] );
+        unset( $content['options'] );
         unset( $content['db_options'] );
         if ( $content['is_multiselect'] == false ) {
             unset( $content['is_multiselect'] );

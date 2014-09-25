@@ -10,7 +10,7 @@
         <th>{"Identifier"|i18n('design/standard/class/datatype')}</th>
     </tr>
 
-    {foreach $content.options as $option_index => $option_item}
+    {foreach $content.basic_options as $option_index => $option_item}
         {set $row_count = $row_count|inc()}
         <tr class="{$bg_colors[$row_count|mod(2)]}">
             <td colspan="2">{if $option_item.type|eq('optgroup')}<b>{/if}{$option_index|inc()}.{if $option_item.type|eq('optgroup')}</b>{/if}</td>

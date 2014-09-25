@@ -1,6 +1,6 @@
 {def $content=$attribute.content
      $class_content=$attribute.class_content
-     $available_options=$class_content.options}
+     $options=$class_content.options}
 
 {set-block scope=root variable=pdf_text}{*
 *}{foreach $content.options as $option}{*
