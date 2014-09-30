@@ -4,6 +4,6 @@
 ExtensionName=owenhancedselection
 ClassName=OWEnhancedSelectionExtendedAttributeFilter
 MethodName=createSqlParts
-FileName=classes/extendedattributefilter.php
+FileName=datatypes/owenhancedselection/owenhancedselectionextendedattributefilter.php
 
 */
