@@ -6,6 +6,8 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
         $content = $attribute->content();
         unset( $content['options'] );
         unset( $content['db_options'] );
+        unset( $content['options_by_identifier'] );
+        unset( $content['available_options'] );
         if ( $content['is_multiselect'] == false ) {
             unset( $content['is_multiselect'] );
         } else {
@@ -17,9 +19,9 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
         if ( empty( $content['query'] ) ) {
             unset( $content['query'] );
         }
-        if ( !empty( $content['options'] ) ) {
+        if ( !empty( $content['basic_options'] ) ) {
             $optionList = array();
-            foreach ( $content['options'] as $option ) {
+            foreach ( $content['basic_options'] as $option ) {
                 $optionArray = array(
                     'identifier' => $option->attribute( 'identifier' ),
                     'priority' => $option->attribute( 'priority' ),
@@ -41,9 +43,8 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
                 $optionList[] = $optionArray;
             }
             $content['options'] = $optionList;
-        } else {
-            unset( $content['options'] );
         }
+        unset( $content['basic_options'] );
         return $content;
     }
 
