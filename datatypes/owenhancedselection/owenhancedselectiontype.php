@@ -151,11 +151,14 @@ class OWEnhancedSelectionType extends eZDataType {
         return $content;
     }
 
-    function storeClassAttribute( $classAttribute, $version ) {
+    function preStoreClassAttribute( $classAttribute, $version ) {
         $content = $classAttribute->content();
+        unset( $content['basic_options'] );
         unset( $content['db_options'] );
         unset( $content['options'] );
+        unset( $content['options_by_identifier'] );
         $classAttribute->setAttribute( self::CONTENT_CLASS_STORAGE, serialize( $content ) );
+        $classAttribute->setContent(  $content );
     }
 
     function deleteStoredClassAttribute( $classAttribute, $version = null ) {
