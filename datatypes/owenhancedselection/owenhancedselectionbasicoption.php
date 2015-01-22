@@ -39,6 +39,8 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
             $this->NameList = new eZSerializedObjectNameList();
             if ( isset( $row['serialized_name_list'] ) ) {
                 $this->NameList->initFromSerializedList( $row['serialized_name_list'] );
+            } elseif( isset( $row['name'] ) ) {
+                $this->NameList->initFromString( $row['name'] );
             } else {
                 $this->NameList->initDefault();
             }
