@@ -404,10 +404,8 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
                 eZDebug::writeError( "Field '$requiredField' is not set", __METHOD__ );
                 return false;
             }
-            $option[$requiredField] = $newOptionParameters[$requiredField];
         }
         $newOption = self::createOrUpdate( $newOptionParameters );
-
         if( !is_object( $newOption ) ) {
             eZDebug::writeDebug( "New option not added, return is not an object", __METHOD__ );
             return false;
