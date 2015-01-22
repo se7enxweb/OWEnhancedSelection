@@ -28,16 +28,16 @@
 class OWEnhancedSelectionBasicOption extends eZPersistentObject {
 
     const
-            OPTION_TYPE = 'option',
-            OPTGROUP_TYPE = 'optgroup';
+        OPTION_TYPE = 'option',
+        OPTGROUP_TYPE = 'optgroup';
 
     public static $localeCode = false;
 
     public function __construct( $row ) {
-        if ( is_array( $row ) ) {
+        if( is_array( $row ) ) {
             $this->eZPersistentObject( $row );
             $this->NameList = new eZSerializedObjectNameList();
-            if ( isset( $row['serialized_name_list'] ) ) {
+            if( isset( $row['serialized_name_list'] ) ) {
                 $this->NameList->initFromSerializedList( $row['serialized_name_list'] );
             } elseif( isset( $row['name'] ) ) {
                 $this->NameList->initFromString( $row['name'] );
@@ -140,12 +140,12 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
      * @return boolean
      */
     protected function hasOption() {
-        if ( $this->attribute( 'id' ) == null ) {
+        if( $this->attribute( 'id' ) == null ) {
             return false;
         }
         return self::countList( array(
-                    'optgroup_id' => $this->attribute( 'id' ) )
-                ) > 0;
+                'optgroup_id' => $this->attribute( 'id' ) )
+            ) > 0;
     }
 
     /**
@@ -155,10 +155,10 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
      */
     protected function optionList() {
         $objectList = self::fetchList( array(
-                    'optgroup_id' => $this->attribute( 'id' ) )
+                'optgroup_id' => $this->attribute( 'id' ) )
         );
-        foreach ( $objectList as $index => $object ) {
-            if ( $object->attribute( 'priority' ) != $index + 1 ) {
+        foreach( $objectList as $index => $object ) {
+            if( $object->attribute( 'priority' ) != $index + 1 ) {
                 $object->setAttribute( 'priority', $index + 1 );
             }
         }
@@ -172,7 +172,7 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
       @return string
      */
     public function name( $languageLocale = false ) {
-        if ( !$languageLocale ) {
+        if( !$languageLocale ) {
             $languageLocale = self::$localeCode;
         }
         return $this->NameList->name( $languageLocale );
@@ -185,7 +185,7 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
      * @param string $languageLocale
      */
     function setName( $name, $languageLocale = false ) {
-        if ( !$languageLocale ) {
+        if( !$languageLocale ) {
             $languageLocale = $this->topPriorityLanguageLocale();
         }
         $this->NameList->setNameByLanguageLocale( $name, $languageLocale );
@@ -223,7 +223,7 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
         $sortArr = null;
         $limitArr = null;
 
-        if ( (int) $limit != 0 ) {
+        if( (int) $limit != 0 ) {
             $limitArr = array(
                 'limit' => $limit,
                 'offset' => $offset );
@@ -263,11 +263,11 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
      */
     static function fetchAttributeOptionlist( $contentClassAttributeID ) {
         $objectList = self::fetchList( array(
-                    'contentclassattribute_id' => $contentClassAttributeID,
-                    'optgroup_id' => 0
-                ) );
-        foreach ( $objectList as $index => $object ) {
-            if ( $object->attribute( 'priority' ) != ($index + 1) * 10 ) {
+                'contentclassattribute_id' => $contentClassAttributeID,
+                'optgroup_id' => 0
+            ) );
+        foreach( $objectList as $index => $object ) {
+            if( $object->attribute( 'priority' ) != ($index + 1) * 10 ) {
                 $object->setAttribute( 'priority', ($index + 1) * 10 );
             }
         }
@@ -275,17 +275,17 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
     }
 
     static function createOrUpdate( $row ) {
-        if ( array_key_exists( 'id', $row ) ) {
+        if( array_key_exists( 'id', $row ) ) {
             $cond = array( 'id' => $row['id'] );
-        } elseif ( array_key_exists( 'contentclassattribute_id', $row ) && array_key_exists( 'identifier', $row ) ) {
+        } elseif( array_key_exists( 'contentclassattribute_id', $row ) && array_key_exists( 'identifier', $row ) ) {
             $cond = array(
                 'contentclassattribute_id' => $row['contentclassattribute_id'],
                 'identifier' => $row['identifier'],
             );
         }
         $object = static::fetch( $cond );
-        if ( $object ) {
-            foreach ( $row as $attribute => $value ) {
+        if( $object ) {
+            foreach( $row as $attribute => $value ) {
                 $object->setAttribute( $attribute, $value );
             }
         } else {
@@ -302,18 +302,18 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
      * @param array $fieldFilters
      */
     function store( $store_childs = false, $fieldFilters = null ) {
-        if ( $this->attribute( 'identifier' ) == '' ) {
+        if( $this->attribute( 'identifier' ) == '' ) {
             $this->setAttribute( 'identifier', $this->generateIdentifier() );
         }
-        if ( $this->attribute( 'type' ) == '' ) {
+        if( $this->attribute( 'type' ) == '' ) {
             $this->setAttribute( 'type', self::OPTION_TYPE );
         }
         $this->setAttribute( 'serialized_name_list', $this->NameList->serializeNames() );
-        if ( $this->attribute( 'priority' ) == 0 ) {
+        if( $this->attribute( 'priority' ) == 0 ) {
             $lastPriority = static::max( 'priority', array(
-                        'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
-                        'optgroup_id' => $this->attribute( 'optgroup_id' )
-                    ) );
+                    'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
+                    'optgroup_id' => $this->attribute( 'optgroup_id' )
+                ) );
             $lastPriority += $this->attribute( 'optgroup_id' ) == 0 ? 10 : 1;
             $this->setAttribute( 'priority', $lastPriority );
         }
@@ -327,8 +327,8 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
      * @param array $extraConditions
      */
     public function remove( $conditions = null, $extraConditions = null ) {
-        if ( $this->attribute( 'has_option' ) ) {
-            foreach ( $this->attribute( 'option_list' ) as $option ) {
+        if( $this->attribute( 'has_option' ) ) {
+            foreach( $this->attribute( 'option_list' ) as $option ) {
                 $option->remove();
             }
         }
@@ -359,104 +359,82 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
 
     protected function generateIdentifier() {
         $name = $this->attribute( 'name' );
-        if ( empty( $name ) ) {
+        if( empty( $name ) ) {
             return '';
         }
-
         $identifier = $name;
-
         $trans = eZCharTransform::instance();
         $generatedIdentifier = $trans->transformByGroup( $identifier, 'identifier' );
-
         $identifierCount = self::countList( array(
-                    'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
-                    'identifier' => $generatedIdentifier,
-                ) );
-        if ( $identifierCount > 0 ) {
+                'contentclassattribute_id' => $this->attribute( 'contentclassattribute_id' ),
+                'identifier' => $generatedIdentifier,
+            ) );
+        if( $identifierCount > 0 ) {
             $generatedIdentifier .= "_$identifierCount";
         }
         return $generatedIdentifier;
     }
 
     public static function addOption( $newOptionParameters ) {
-
         if( isset( $newOptionParameters['optgroup_identifier'] ) ) {
             $optgroup = self::fetch( array(
-                'contentclassattribute_id' => $newOptionParameters['contentclassattribute_id'],
-                'identifier' => $newOptionParameters['optgroup_identifier'],
-                'type' => 'optgroup'
-            ) );
-
-            if( ! is_object( $optgroup ) || ( ! $optgroup instanceof OWEnhancedSelectionBasicOption ) ) {
+                    'contentclassattribute_id' => $newOptionParameters['contentclassattribute_id'],
+                    'identifier' => $newOptionParameters['optgroup_identifier'],
+                    'type' => 'optgroup'
+                ) );
+            if( !is_object( $optgroup ) || (!$optgroup instanceof OWEnhancedSelectionBasicOption ) ) {
                 eZDebug::writeError( "The optgroup's identifier '" . $newOptionParameters['optgroup_identifier'] . "' can't be found", __METHOD__ );
                 return false;
             }
-
             unset( $newOptionParameters['optgroup_identifier'] );
             $newOptionParameters['optgroup_id'] = $optgroup->attribute( 'id' );
         }
-
         return self::addItem( $newOptionParameters );
-
     }
 
-
     public static function addOptgroup( $newOptionParameters ) {
-
         $newOptionParameters['type'] = 'optgroup';
         return self::addItem( $newOptionParameters );
-
     }
 
     public static function addItem( $newOptionParameters ) {
         $requiredFieldList = array( 'identifier', 'name' );
-        
         foreach( $requiredFieldList as $requiredField ) {
-            if( ! isset( $newOptionParameters[$requiredField] ) ) {
+            if( !isset( $newOptionParameters[$requiredField] ) ) {
                 eZDebug::writeError( "Field '$requiredField' is not set", __METHOD__ );
                 return false;
             }
-
             $option[$requiredField] = $newOptionParameters[$requiredField];
         }
-
         $newOption = self::createOrUpdate( $newOptionParameters );
 
-        if( ! is_object( $newOption ) ) {
+        if( !is_object( $newOption ) ) {
             eZDebug::writeDebug( "New option not added, return is not an object", __METHOD__ );
             return false;
         }
-
         return $newOption;
     }
 
     public static function removeOption( $contentClassAttribute, $optionIdentifier ) {
-
         return self::removeItem( $contentClassAttribute, $optionIdentifier );
-
     }
 
     public static function removeOptgroup( $contentClassAttribute, $optionIdentifier ) {
-
         return self::removeItem( $contentClassAttribute, $optionIdentifier, 'optgroup' );
-
     }
 
     public static function removeItem( $contentClassAttribute, $optionIdentifier, $type = 'option' ) {
-
         $option = self::fetch( array(
-            'contentclassattribute_id' => $contentClassAttribute->attribute( 'id' ),
-            'identifier' => $optionIdentifier,
-            'type' => $type
-        ) );
+                'contentclassattribute_id' => $contentClassAttribute->attribute( 'id' ),
+                'identifier' => $optionIdentifier,
+                'type' => $type
+            ) );
 
-        if( ! $option ) {
+        if( !$option ) {
             eZDebug::writeDebug( "There were no option to remove for the identifier '$optionIdentifier'", __METHOD__ );
             return false;
         }
-
         $option->remove();
-
         return true;
     }
 
