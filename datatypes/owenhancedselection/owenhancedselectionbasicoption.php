@@ -378,6 +378,88 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
         return $generatedIdentifier;
     }
 
+    public static function addOption( $newOptionParameters ) {
+
+        if( isset( $newOptionParameters['optgroup_identifier'] ) ) {
+            $optgroup = self::fetch( array(
+                'contentclassattribute_id' => $newOptionParameters['contentclassattribute_id'],
+                'identifier' => $newOptionParameters['optgroup_identifier'],
+                'type' => 'optgroup'
+            ) );
+
+            if( ! is_object( $optgroup ) || ( ! $optgroup instanceof OWEnhancedSelectionBasicOption ) ) {
+                eZDebug::writeError( "The optgroup's identifier '" . $newOptionParameters['optgroup_identifier'] . "' can't be found", __METHOD__ );
+                return false;
+            }
+
+            unset( $newOptionParameters['optgroup_identifier'] );
+            $newOptionParameters['optgroup_id'] = $optgroup->attribute( 'id' );
+        }
+
+        return self::addItem( $newOptionParameters );
+
+    }
+
+
+    public static function addOptgroup( $newOptionParameters ) {
+
+        $newOptionParameters['type'] = 'optgroup';
+        return self::addItem( $newOptionParameters );
+
+    }
+
+    public static function addItem( $newOptionParameters ) {
+        $requiredFieldList = array( 'identifier', 'name' );
+        
+        foreach( $requiredFieldList as $requiredField ) {
+            if( ! isset( $newOptionParameters[$requiredField] ) ) {
+                eZDebug::writeError( "Field '$requiredField' is not set", __METHOD__ );
+                return false;
+            }
+
+            $option[$requiredField] = $newOptionParameters[$requiredField];
+        }
+
+        $newOption = self::createOrUpdate( $newOptionParameters );
+
+        if( ! is_object( $newOption ) ) {
+            eZDebug::writeDebug( "New option not added, return is not an object", __METHOD__ );
+            return false;
+        }
+
+        return $newOption;
+    }
+
+    public static function removeOption( $contentClassAttribute, $optionIdentifier ) {
+
+        return self::removeItem( $contentClassAttribute, $optionIdentifier );
+
+    }
+
+    public static function removeOptgroup( $contentClassAttribute, $optionIdentifier ) {
+
+        return self::removeItem( $contentClassAttribute, $optionIdentifier, 'optgroup' );
+
+    }
+
+    public static function removeItem( $contentClassAttribute, $optionIdentifier, $type = 'option' ) {
+
+        $option = self::fetch( array(
+            'contentclassattribute_id' => $contentClassAttribute->attribute( 'id' ),
+            'identifier' => $optionIdentifier,
+            'type' => $type
+        ) );
+
+        if( ! $option ) {
+            eZDebug::writeDebug( "There were no option to remove for the identifier '$optionIdentifier'", __METHOD__ );
+            return false;
+        }
+
+        $option->remove();
+
+        return true;
+    }
+
     /**
      * Object ti string convertion
      * 
