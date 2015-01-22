@@ -409,17 +409,6 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
     }
 
     public static function addItem( $newOptionParameters ) {
-        $requiredFieldList = array( 'identifier', 'name' );
-        
-        foreach( $requiredFieldList as $requiredField ) {
-            if( ! isset( $newOptionParameters[$requiredField] ) ) {
-                eZDebug::writeError( "Field '$requiredField' is not set", __METHOD__ );
-                return false;
-            }
-
-            $option[$requiredField] = $newOptionParameters[$requiredField];
-        }
-
         $newOption = self::createOrUpdate( $newOptionParameters );
 
         if( ! is_object( $newOption ) ) {
