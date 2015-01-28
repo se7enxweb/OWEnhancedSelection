@@ -1,7 +1,13 @@
-{let content=$attribute.content
-     $class_content=$attribute.class_content
-     $post_value = ezhttp( concat('ContentObjectAttribute_owenhancedselection_selection_',$attribute.id) )
-     $selected_id_array = cond(is_null($post_value)|not(), $post_value , is_set($value), $value, $content.identifiers)}
+{def content=$attribute.content
+     $class_content=$attribute.class_content}
+
+{if ezhttp_hasvariable( concat('ContentObjectAttribute_owenhancedselection_selection_',$attribute.id) )}
+    {def $post_value = ezhttp( concat('ContentObjectAttribute_owenhancedselection_selection_',$attribute.id) )
+         $selected_id_array = cond(is_null($post_value)|not(), $post_value , is_set($value), $value, $content.identifiers)}
+{else}
+    {def $selected_id_array = array()}
+{/if}
+
 
 <select name="ContentObjectAttribute_owenhancedselection_selection_{$attribute.id}[]"
         {if $class_content.is_multiselect}multiple="multiple"{/if} {if is_set($html_class)}class="{$html_class}"{/if} {if is_set($html_id)}id="{$html_id}"{/if}>
@@ -28,4 +34,4 @@
 
 </select>  
 
-{/let}
+{undef}
