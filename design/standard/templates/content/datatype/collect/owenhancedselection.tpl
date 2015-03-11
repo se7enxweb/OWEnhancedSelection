@@ -1,4 +1,4 @@
-{def content=$attribute.content
+{def $content=$attribute.content
      $class_content=$attribute.class_content}
 
 {if ezhttp_hasvariable( concat('ContentObjectAttribute_owenhancedselection_selection_',$attribute.id) )}
