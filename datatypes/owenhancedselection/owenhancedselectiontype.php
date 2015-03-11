@@ -174,6 +174,9 @@ class OWEnhancedSelectionType extends eZDataType {
         $newClassAttribute->store();
         $content = $oldClassAttribute->content();
         foreach ( $content['options'] as $option ) {
+            if( $option instanceof OWEnhancedSelectionDBOption) {
+                break;
+            }
             $newOption = clone( $option );
             $newOption->setAttribute( 'id', null );
             $newOption->setAttribute( 'contentclassattribute_id', $newClassAttribute->attribute( 'id' ) );
