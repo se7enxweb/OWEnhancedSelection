@@ -204,7 +204,7 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
      * Fetch an object by custom conditions
      * 
      * @param array $conds
-     * @return INCA_eCancerJoomlaContentMapping
+     * @return OWEnhancedSelectionBasicOption
      */
     static function fetch( array $conds ) {
         return self::fetchObject( self::definition(), null, $conds );
