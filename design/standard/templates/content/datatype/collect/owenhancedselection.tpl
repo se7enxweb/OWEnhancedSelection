@@ -3,7 +3,9 @@
 
 {if ezhttp_hasvariable( concat('ContentObjectAttribute_owenhancedselection_selection_',$attribute.id) )}
     {def $post_value = ezhttp( concat('ContentObjectAttribute_owenhancedselection_selection_',$attribute.id) )
-         $selected_id_array = cond(is_null($post_value)|not(), $post_value , is_set($value), $value, $content.identifiers)}
+         $selected_id_array = array(cond(is_null($post_value)|not(), $post_value , $content.identifiers))}
+{elseif is_set($value)}
+    {def $selected_id_array = array($value)}
 {else}
     {def $selected_id_array = array()}
 {/if}
