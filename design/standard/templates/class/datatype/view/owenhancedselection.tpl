@@ -47,4 +47,11 @@
     <label>{"Database query"|i18n('design/standard/class/datatype')}:</label>
     <p>{$content.query|wash|nl2br}</p>
 </div>
+
+<div class="block">
+    <div class="element">
+        <label>{"Return the raw content object attributes (only returns the deserialized table)"|i18n('design/standard/class/datatype')} :</label>
+        <p>{cond($content.is_deserialized,"Yes"|i18n('design/standard/class/datatype'),"No"|i18n('design/standard/class/datatype'))}</p>
+    </div>
+</div>
 {undef}

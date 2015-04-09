@@ -19,6 +19,9 @@ class OWEnhancedSelectionTypeMigrationHandler extends DefaultDatatypeMigrationHa
         if ( empty( $content['query'] ) ) {
             unset( $content['query'] );
         }
+        if ( empty( $content['is_deserialized'] ) ) {
+            unset( $content['is_deserialized'] );
+        }
         if ( !empty( $content['basic_options'] ) ) {
             $optionList = array();
             foreach ( $content['basic_options'] as $option ) {

@@ -173,6 +173,12 @@ FROM table1</pre>
               cols="80"
               class="box"
               name="ContentClass_owenhancedselection_query_{$id}">{$content.query|wash}</textarea>
+    <div class="element">
+        <label>{"Return the raw content object attributes (only returns the deserialized table)"|i18n('design/standard/class/datatype')} :</label>
+        <input type="checkbox"
+               name="ContentClass_owenhancedselection_deserialized_{$id}"
+               {section show=$content.is_deserialized}checked="checked"{/section} />
+    </div>
 </div>       
 
 {undef}

@@ -85,6 +85,8 @@ class OWEnhancedSelectionType extends eZDataType {
 
         $queryName = "{$base}_owenhancedselection_query_{$id}";
 
+        $deserializedName = "{$base}_owenhancedselection_deserialized_{$id}";
+
         if ( $http->hasPostVariable( $idArrayName ) ) {
             $idArray = $http->postVariable( $idArrayName );
             $nameArray = $http->postVariable( $nameArrayName );
@@ -113,6 +115,12 @@ class OWEnhancedSelectionType extends eZDataType {
 
         if ( $http->hasPostVariable( $queryName ) ) {
             $content['query'] = trim( $http->postVariable( $queryName ) );
+
+            if ( $http->hasPostVariable( $deserializedName ) ) {
+                $content['is_deserialized'] = 1;
+            } else if ( $http->hasPostVariable( 'ContentClassHasInput' ) ) {
+                $content['is_deserialized'] = 0;
+            }
         }
 
         $classAttribute->setContent( $content );

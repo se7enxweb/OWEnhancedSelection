@@ -71,5 +71,9 @@
 			<source>To create an option list with group</source>
 			<translation>Pour créer une liste avec des groupes</translation>
 		</message>
+        <message>
+            <source>Return the raw content object attributes (only returns the deserialized table)</source>
+            <translation>Renvoyer le contenu brut des attributs d'objets (renvoie uniquement le tableau désérialisé)</translation>
+        </message>
 	</context>
 </TS>
