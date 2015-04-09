@@ -69,6 +69,11 @@ class OWEnhancedSelectionType extends eZDataType {
             }
         }
 
+        $deserializedName = join( '_', array( $base, 'owenhancedselection_deserialized', $id ) );
+        if ( $http->hasPostVariable( $deserializedName ) && (!isset($query) || empty( $query ))) {
+            return eZInputValidator::STATE_INVALID;
+        }
+
         return eZInputValidator::STATE_ACCEPTED;
     }
 
@@ -115,12 +120,12 @@ class OWEnhancedSelectionType extends eZDataType {
 
         if ( $http->hasPostVariable( $queryName ) ) {
             $content['query'] = trim( $http->postVariable( $queryName ) );
+        }
 
-            if ( $http->hasPostVariable( $deserializedName ) ) {
-                $content['is_deserialized'] = 1;
-            } else if ( $http->hasPostVariable( 'ContentClassHasInput' ) ) {
-                $content['is_deserialized'] = 0;
-            }
+        if ( $http->hasPostVariable( $deserializedName ) ) {
+            $content['is_deserialized'] = 1;
+        } else if ( $http->hasPostVariable( 'ContentClassHasInput' ) ) {
+            $content['is_deserialized'] = 0;
         }
 
         $classAttribute->setContent( $content );
@@ -137,13 +142,20 @@ class OWEnhancedSelectionType extends eZDataType {
                 'is_multiselect' => 0,
                 'delimiter' => '',
                 'query' => '',
+                'is_deserialized' => 0,
                 'db_options' => array(),
                 'options' => array(),
                 'options_by_identifier' => array()
             );
         } else {
             $content['basic_options'] = OWEnhancedSelectionBasicOption::fetchAttributeOptionlist( $classAttribute->attribute( 'id' ) );
-            $content['db_options'] = $this->getDbOptions( $content );
+
+            if( isset( $content['is_deserialized'] ) && $content['is_deserialized'] == 1  ) {
+                $content['db_options'] = array();
+            } else {
+                $content['db_options'] = $this->getDbOptions( $content );
+            }
+
             $content['options'] = empty( $content['db_options'] ) ? $content['basic_options'] : $content['db_options'];
             $optionsByidentifier = array();
             foreach ( $content['options'] as $option ) {
@@ -312,19 +324,26 @@ class OWEnhancedSelectionType extends eZDataType {
 
     function objectAttributeContent( $contentObjectAttribute ) {
         OWEnhancedSelectionBasicOption::$localeCode = $contentObjectAttribute->attribute( 'language_code' );
-        $optionList = array();
         $contentString = $contentObjectAttribute->attribute( 'data_text' );
         $identifierList = unserialize( $contentString );
+
+        $optionList = array();
         if ( !is_array( $identifierList ) ) {
             $identifierList = array();
         }
+
         $classAttributeContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
+        if(isset($classAttributeContent['is_deserialized']) &&  $classAttributeContent['is_deserialized'] == 1 ) {
+            $classAttributeContent = array_merge($classAttributeContent, $this->getDeserializedData( $identifierList ));
+        }
+
         $availableOptions = $classAttributeContent['options_by_identifier'];
         foreach ( $identifierList as $identifier ) {
             if ( isset( $availableOptions[$identifier] ) ) {
                 $optionList[$identifier] = $availableOptions[$identifier];
             }
         }
+
         $content = array(
             'options' => array_values( $optionList ),
             'options_by_identifier' => $optionList,
@@ -332,7 +351,6 @@ class OWEnhancedSelectionType extends eZDataType {
         );
         $classContent = $contentObjectAttribute->classContent();
         $content['to_string'] = $this->_title( $content, $classContent );
-
         return $content;
     }
 
@@ -522,12 +540,32 @@ class OWEnhancedSelectionType extends eZDataType {
         return false;
     }
 
+    function getDeserializedData( $identifierList ) {
+        $optionList = array();
+        $content = array();
+        foreach( $identifierList as $identifier) {
+            $option = new OWEnhancedSelectionDBOption();
+            $option->setAttribute( 'name', $identifier);
+            $option->setAttribute( 'identifier', $identifier );
+            $option->setAttribute( 'type', OWEnhancedSelectionBasicOption::OPTION_TYPE );
+            $optionList[] = $option;
+        }
+        $content['options'] = array_values( $optionList );
+
+        $optionsByidentifier = array();
+        foreach ( $content['options'] as $option ) {
+            $optionsByidentifier[$option->attribute( 'identifier' )] = $option;
+        }
+        $content['options_by_identifier'] = $optionsByidentifier;
+
+        return $content;
+    }
+
     function getDbOptions( $classContent ) {
         $optionList = array();
 
         if ( isset( $classContent['query'] ) &&
-            !empty( $classContent['query'] ) &&
-            $this->isDbQueryValid( $classContent['query'] ) === true ) {
+            !empty( $classContent['query'] )) {
             $db = eZDB::instance();
             $res = $db->arrayQuery( $classContent['query'] );
             foreach ( $res as $res_item ) {
