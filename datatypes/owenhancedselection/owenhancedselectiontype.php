@@ -134,7 +134,7 @@ class OWEnhancedSelectionType extends eZDataType {
         return true;
     }
 
-    function classAttributeContent( $classAttribute ) {
+    function classAttributeContent( $classAttribute, $is_value = false ) {
         $content = @unserialize( $classAttribute->attribute( self::CONTENT_CLASS_STORAGE ) );
         if ( empty( $content ) ) {
             $content = array(
@@ -150,7 +150,7 @@ class OWEnhancedSelectionType extends eZDataType {
         } else {
             $content['basic_options'] = OWEnhancedSelectionBasicOption::fetchAttributeOptionlist( $classAttribute->attribute( 'id' ) );
 
-            if( isset( $content['is_deserialized'] ) && $content['is_deserialized'] == 1  ) {
+            if( isset( $content['is_deserialized'] ) && $content['is_deserialized'] == 1 && $is_value == true ) {
                 $content['db_options'] = array();
             } else {
                 $content['db_options'] = $this->getDbOptions( $content );
@@ -332,7 +332,7 @@ class OWEnhancedSelectionType extends eZDataType {
             $identifierList = array();
         }
 
-        $classAttributeContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
+        $classAttributeContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ), true );
         if(isset($classAttributeContent['is_deserialized']) &&  $classAttributeContent['is_deserialized'] == 1 ) {
             $classAttributeContent = array_merge($classAttributeContent, $this->getDeserializedData( $identifierList ));
         }
