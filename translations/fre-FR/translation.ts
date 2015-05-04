@@ -28,6 +28,10 @@
 			<translation>Nouveau groupe d'option</translation>
 		</message>
 		<message>
+			<source>New option in group</source>
+			<translation>Nouvelle option dans le groupe</translation>
+		</message>
+		<message>
 			<source>Remove selected option(s)</source>
 			<translation>Supprimer la sélection</translation>
 		</message>
