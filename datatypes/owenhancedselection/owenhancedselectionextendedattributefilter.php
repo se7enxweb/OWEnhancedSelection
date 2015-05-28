@@ -30,7 +30,8 @@ class OWEnhancedSelectionExtendedAttributeFilter {
                     $paramItem['values'] = array( $paramItem['values'] );
                 }
                 $tablesList[] = 'INNER JOIN ezcontentobject_attribute AS ezcontentobject_attribute_' . $paramItem['attribute'] . ' ON ( ezcontentobject.id = ezcontentobject_attribute_' . $paramItem['attribute'] . '.contentobject_id AND ezcontentobject_attribute_' . $paramItem['attribute'] . '.contentclassattribute_id = ' . $paramItem['attribute'] . ' )';
-                $joinBaseString = "( ezcontentobject_attribute_" . $paramItem['attribute'] . ".sort_key_string %s %s )";
+                $joinBaseString = "( ezcontentobject_attribute_" . $paramItem['attribute'] . ".version =  ezcontentobject.current_version) and ";
+                $joinBaseString .= "( ezcontentobject_attribute_" . $paramItem['attribute'] . ".sort_key_string %s %s )";
                 switch ( $paramItem['filter'] ) {
                     case '=':
                         $regexp = '"^((' . implode( '|', $paramItem['values'] ) . '){1}[[. .]]?)+$"';
