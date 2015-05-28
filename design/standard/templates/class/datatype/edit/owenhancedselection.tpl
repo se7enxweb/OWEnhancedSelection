@@ -66,7 +66,7 @@
                                 {if $option_item.type|eq('optgroup')}
                                     <input type="submit"
                                            class="button btn"
-                                           value="{'New option'|i18n('design/standard/class/datatype')}"
+                                           value="{'New option in group'|i18n('design/standard/class/datatype')}"
                                            name="CustomActionButton[{$id}_new-option_{$option_item.id}]" />
                                 {/if}
                             </div>
