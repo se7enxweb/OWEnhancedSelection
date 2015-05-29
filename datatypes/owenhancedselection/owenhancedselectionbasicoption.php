@@ -172,10 +172,10 @@ class OWEnhancedSelectionBasicOption extends eZPersistentObject {
       @return string
      */
     public function name( $languageLocale = false ) {
-        if( !$languageLocale ) {
+        if( !$languageLocale && !is_null(self::$localeCode)) {
             $languageLocale = self::$localeCode;
         }
-        return $this->NameList->name( $languageLocale );
+        return $this->NameList->name( $languageLocale);
     }
 
     /**

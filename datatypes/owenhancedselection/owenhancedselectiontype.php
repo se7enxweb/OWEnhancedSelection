@@ -326,7 +326,6 @@ class OWEnhancedSelectionType extends eZDataType {
         OWEnhancedSelectionBasicOption::$localeCode = $contentObjectAttribute->attribute( 'language_code' );
         $contentString = $contentObjectAttribute->attribute( 'data_text' );
         $identifierList = unserialize( $contentString );
-
         $optionList = array();
         if ( !is_array( $identifierList ) ) {
             $identifierList = array();
@@ -343,7 +342,6 @@ class OWEnhancedSelectionType extends eZDataType {
                 $optionList[$identifier] = $availableOptions[$identifier];
             }
         }
-
         $content = array(
             'options' => array_values( $optionList ),
             'options_by_identifier' => $optionList,
@@ -387,44 +385,17 @@ class OWEnhancedSelectionType extends eZDataType {
     }
 
     function fetchCollectionAttributeHTTPInput( $collection, $collectionAttribute, $http, $base, $objectAttribute ) {
-
         $id = $objectAttribute->attribute( 'id' );
-        $classContent = $objectAttribute->classContent();
-        $nameArray = array();
+        $content = array();
 
-        $selectionName = join( '_', array( $base, 'owenhancedselection_selection',
-            $id ) );
-        $selection = $http->postVariable( $selectionName );
+        $selectionName = join( '_', array( $base, 'owenhancedselection_selection', $id ) );
 
         if ( $http->hasPostVariable( $selectionName ) ) {
             $selection = $http->postVariable( $selectionName );
-
-            if ( count( $selection ) > 0 && $selection[0] != '' ) {
-                $classAttributeContent = $this->classAttributeContent( $objectAttribute->attribute( 'contentclass_attribute' ) );
-                $availableOptions = $classAttributeContent['options'];
-                foreach ( $availableOptions as $option ) {
-
-                    if ( in_array( $option->attribute( 'identifier' ), $selection ) ) {
-                        $nameArray[] = $option->name();
-                    }
-                    if ( $option->attribute( 'type' ) == OWEnhancedSelectionBasicOption::OPTGROUP_TYPE ) {
-                        $subOptionList = $option->attribute( 'option_list' );
-                        foreach ( $subOptionList as $subOption ) {
-                            if ( in_array( $subOption->attribute( 'identifier' ), $selection ) ) {
-                                $nameArray[] = $option->attribute( 'name' ) . '/' . $subOption->attribute( 'name' );
-                            }
-                        }
-                    }
-                }
-            }
+            $collectionAttribute->setAttribute( 'data_text', serialize($selection) );
+            return true;
         }
-        $delimiter = $classContent['delimiter'];
-        if ( empty( $delimiter ) ) {
-            $delimiter = $this->defaultDelimiter;
-        }
-        $dataText = join( $delimiter, $nameArray );
-        $collectionAttribute->setAttribute( 'data_text', $dataText );
-        return true;
+        return false;
     }
 
     function hasInformationCollection() {
@@ -462,10 +433,11 @@ class OWEnhancedSelectionType extends eZDataType {
     protected function _title( $content, $classContent ) {
         $titleArray = array();
         $titleString = "";
+
         if ( count( $content['options'] ) > 0 ) {
             $options = $content['options'];
             foreach ( $options as $option ) {
-                $titleArray[] = ($option->attribute( 'optgroup' ) ? $option->attribute( 'optgroup' )->attribute( 'name' ) . '/' : "" ) . $option->attribute( 'name' );
+                $titleArray[] = ($option->attribute( 'optgroup' ) ? $option->attribute( 'optgroup' )->name() . '/' : "" ) . $option->name();
             }
             unset( $options );
         }

@@ -1,3 +1,8 @@
-{if $attribute|get_class|eq('ezinformationcollectionattribute')}
-    {$attribute.data_text|wash}
-{/if}
+{def $content=$attribute.content
+$class_content=$attribute.class_content
+$options=$class_content.options}
+{foreach $content.options as $option}
+    {delimiter}{cond( $class_content.delimiter|ne(""), $class_content.delimiter, ezini('Delimiter', 'Default', 'owenhancedselection.ini'))}{/delimiter}
+    {if $option.optgroup}{$option.optgroup.name|wash}/{/if}{$option.name|wash}
+{/foreach}
+{undef}

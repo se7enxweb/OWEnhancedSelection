@@ -114,6 +114,9 @@ class OWEnhancedSelectionDBOption {
         return $has_attr;
     }
 
+    public function name( ) {
+        return $this->attribute('name');
+    }
     /**
      * Returns the attribute data for $attr, this is either returned from the
      * member variables or a member function depending on whether the definition
